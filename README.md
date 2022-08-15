@@ -12,6 +12,8 @@ Currently used as log file for WD dashboard project.
 
 # 0.2 读取数据（csv），sas转csv函数，基础数据处理函数
 ## sas2csv, csv2sas, normalisation, stadradisation, 
+- sas2csv
+- csv2sas
 ## Brainstorm for other possible data pre-process/cleaning functions
 
 # 0.3 封装sklearn（将来处理其他代码）
