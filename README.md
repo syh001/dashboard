@@ -12,10 +12,13 @@ Currently used as log file for WD dashboard project.
 
 # 0.2 数据处理
 ## 0.2.1 前后台打通，读取数据(csv)
+- 以dataframe格式进行处理
 ## 0.2.2 其他部门常用数据格式(例:sas)转csv函数
 - sas2csv, csv2sas, ...
 ## 0.2.3 基础数据(预)处理函数
+- ref Mia's summary of DataProcessing.md list
 ## (0.2.4) Brainstorm for other possible data pre-process/cleaning functions
+- Baosu, Haibo等资深同事提意见和建议
 
 # 0.3 封装sklearn（将来处理其他代码）
 ## 0.3.1 基于0.1.2收集package, from _ import _ 
@@ -25,8 +28,12 @@ Currently used as log file for WD dashboard project.
 # 0.4 数据可视化 （在正确的位置出现，数据显示正确）
 ## 0.4.1 Django 前端位置预留设计，打印空图
 ## 0.4.2 读取、处理csv文件并将结果展示
-## 0.4.3 figure type summary (scatter, plot, bar, pie, ...)
-
+## 0.4.3 figure type summary
+- scatter
+- plot
+- bar
+- pie
+- ...
 
 # 0.5 测试 demo for Yingping
 
@@ -38,6 +45,11 @@ Currently used as log file for WD dashboard project.
 ## 0.5.2 toy数据集测试
 
 ## 0.5.3 大数据集测试 & 统计运行时间与硬件型号(CPU)
+
+- x0: 硬件型号
+- x1: 数据集大小
+- x2: 数据处理类别
+- y: 运行时间
 
 ## 0.5.4 demo
 
