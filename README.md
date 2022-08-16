@@ -17,7 +17,7 @@ Currently used as TODO list & development log for WD dashboard project.
 - sas2csv, csv2sas, ...
 ### 0.2.3 基础数据(预)处理函数
 - ref Mia's summary of DataProcessing.md list
-### (0.2.4) Brainstorm for **other possible** data pre-process/cleaning functions
+### (0.2.4) Brainstorm for *other possible* data pre-process/cleaning functions
 - DA teammates, Baosu, Haibo等同事提意见和建议
 
 # 0.3 封装sklearn（将来处理其他代码）
