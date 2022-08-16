@@ -35,7 +35,7 @@ Currently used as TODO list & development log for WD dashboard project.
 - pie
 - ...
 
-# 0.5 测试 demo for Yingping
+# 0.5 测试 demo inside DA
 
 ### 0.5.1 后端输入输出检查
 - 路径与数据处理接口(输入:识别路径, 输出:处理过的数据)
