@@ -1,8 +1,7 @@
 
-=======
 # wd
 Django dashboard
->>>>>>> 96c92e8832c1dc534f5b70f139bd03eef4557407
+>96c92e8832c1dc534f5b70f139bd03eef4557407
 
 Currently used as TODO list & development log for WD dashboard project.
 
@@ -20,12 +19,7 @@ Currently used as TODO list & development log for WD dashboard project.
 ### (0.2.4) Brainstorm for *other possible* data pre-process/cleaning functions
 - DA teammates, Baosu, Haibo等同事提意见和建议
 
-# 0.3 封装sklearn（将来处理其他代码）
-### 0.3.1 基于0.1.2收集package, from _ import _ 
-### 0.3.2 封装(预留接口)
-
-
-# 0.4 数据可视化 （在正确的位置出现，数据显示正确）
+# 0.3 数据可视化 （在正确的位置出现，数据显示正确）
 ### 0.4.1 Django 前端位置预留设计，打印空图
 ### 0.4.2 读取、处理csv文件并将结果展示
 ### 0.4.3 figure type summary
@@ -34,6 +28,8 @@ Currently used as TODO list & development log for WD dashboard project.
 - bar
 - pie
 - ...
+
+# 0.4 接口（数据选择，预处理，ML，可视化）
 
 # 0.5 测试 demo inside DA
 
@@ -53,8 +49,10 @@ Currently used as TODO list & development log for WD dashboard project.
 
 ## 0.5.4 demo
 
+# 0.6 封装sklearn（将来处理其他代码）
+### 0.6.1 基于0.1.2收集package, from _ import _ 
+### 0.6.2 封装(预留接口)
 
-# 0.6 接口（数据选择，预处理，ML，可视化）
 # 0.7 用户权限（IT同事一起管理？），使用白皮书
 # 0.8 丰富ML算法，完善用户界面（设计，美观？）
 # 0.9 动画效果，鼠标悬浮数据展示
@@ -67,3 +65,6 @@ Currently used as TODO list & development log for WD dashboard project.
 
 
 
+## 数据改动的自动化，选项？
+
+## 时间敏感度
