@@ -4,7 +4,8 @@ import os
 import scipy
 from sas7bdat import SAS7BDAT
 from win32com.client import Dispatch
-
+import random
+import shutil
 
 def csv2sas(data):
 
@@ -25,16 +26,37 @@ def read_data(path):
     elif path.endswith('.jmp'):
         jmp = Dispatch("JMP.Application")
         doc = jmp.OpenDocument(path)
-        # 暂时增添csv文件
+        # temporarily add csv file
         doc.SaveAs('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
         df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
-        # 删除额外生成的csv文件，保证数据仓库没有变动
+        # Delete the extraly generated csv file 
+        # to ensure that the data warehouse has not changed
         os.remove('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
     else:
         df = pd.read_csv(path)
 
     return df
 
+"""
+随机采样 Random (down)sampling
+
+The original dataset may be too large, 
+the plotting/computing time is too long and the memory overhead is too large
+
+Given a dataframe containing N rows, sampling n random rows from it, 
+where n <= N
+
+The input parameter is either the number of sample needed (n) or the ratio/fraction (n/N)
+
+"""
+
+def random_sampling(df, n = None, frac = None):
+    if n:
+        subset = df.sample(n = n)
+    else:
+        subset = df.sample(frac = frac)
+
+    return subset
 
 
 """
