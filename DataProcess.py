@@ -40,8 +40,10 @@ def read_data(path):
 """
 随机采样 Random (down)sampling
 
-The original dataset may be too large, 
+1. The original dataset may be too large, 
 the plotting/computing time is too long and the memory overhead is too large
+
+2. Split train-val/test set for machine learning.
 
 Given a dataframe containing N rows, sampling n random rows from it, 
 where n <= N
@@ -56,7 +58,9 @@ def random_sampling(df, n = None, frac = None):
     else:
         subset = df.sample(frac = frac)
 
-    return subset
+    remaining = df.drop(labels=subset.index)
+
+    return subset, remaining
 
 
 """
@@ -109,9 +113,13 @@ def normalise(df):
 
 def standardise(df):
 
-    cols=list(df)   # 可以改成自己需要的列的名字
-    
+    # 获取完整列名
+    cols=list(df)
+
+    # 每列里数据类型为string或bool的跳过
     for item in cols:
+        if df[item].dtype == 'string' or 'bool':
+            continue
         mean_tmp = np.mean(np.array(df[item]))
         std_tmp = np.std(np.array(df[item]))
         df[item] = df[item].apply(lambda x: (x - mean_tmp) / std_tmp + 1e-6)
@@ -126,7 +134,7 @@ def standardise(df):
 
     return (data - np.min(data)) / max_min_range
 
-def standardise(data):
+# def standardise(data):
     print("Standardsing ......")
     mu = np.mean(data, axis=0)
     sigma = np.std(data, axis=0)
@@ -148,6 +156,11 @@ print(d)
 
 normalise(d)
 
+save_process_flag = False
+target_path = None
+
+if save_process_flag == True:
+    d.to_csv(target_path)
 
 
 
