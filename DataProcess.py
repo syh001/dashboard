@@ -149,7 +149,7 @@ export_data(format)
 """
 def export_data(data, save_process_flag, target_path):
     if save_process_flag == True:
-        d.to_csv(target_path)
+        data.to_csv(target_path)
 
 
 
@@ -167,8 +167,8 @@ if __name__ == 'main':
 
     normalise(d)
 
-    save_process_flag = False
-    target_path = None
+    # save_process_flag = False
+    # target_path = None
 
 
 
