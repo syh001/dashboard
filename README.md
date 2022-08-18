@@ -20,9 +20,9 @@ Currently used as TODO list & development log for WD dashboard project.
 - DA teammates, Baosu, Haibo等同事提意见和建议
 
 # 0.3 数据可视化 （在正确的位置出现，数据显示正确）
-### 0.4.1 Django 前端位置预留设计，打印空图
-### 0.4.2 读取、处理csv文件并将结果展示
-### 0.4.3 figure type summary
+### 0.3.1 Django 前端位置预留设计，打印空图
+### 0.3.2 读取、处理csv文件并将结果展示
+### 0.3.3 figure type summary
 - scatter
 - plot
 - bar
@@ -30,6 +30,10 @@ Currently used as TODO list & development log for WD dashboard project.
 - ...
 
 # 0.4 接口（数据选择，预处理，ML，可视化）
+### 0.4.1 勾选框
+### 0.4.2 滑动框
+### 0.4.3 
+
 
 # 0.5 测试 demo inside DA
 
