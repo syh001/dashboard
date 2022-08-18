@@ -10,9 +10,9 @@ import shutil
 def csv2sas(data):
 
     return data
+
 # pandas dataframe 为数据处理所用格式，不会出现直接的csv2sas
 # 可直接用pd的函数保存sas，如需
-
 
 def sas2csv(data):
 
@@ -59,7 +59,7 @@ def random_sampling(df, n = None, frac = None):
         subset = df.sample(frac = frac)
 
     remaining = df.drop(labels=subset.index)
-
+    # remaining = df[~df.index.isin(subset.index)]
     return subset, remaining
 
 
@@ -71,7 +71,7 @@ Outlier detection 异常值检测
 def three_sigma_outlier_detection(data):
 
 
-    return None
+    return data
 
 
 
@@ -80,9 +80,9 @@ def three_sigma_outlier_detection(data):
 Duplicated row process
 """
 
-def duplication_process():
+def duplication_process(data):
 
-    return None
+    return data
 
 """
 数据的标准化和归一化
@@ -94,37 +94,37 @@ standardise(data)
 
 默认按列操作
 """
-def normalise(df):
+def normalise(data):
     
     # 获取完整列名
-    cols=list(df)
+    cols=list(data)
     # cols = df.columns.values.tolist()
     
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if df[item].dtype == 'string' or 'bool':
+        if data[item].dtype == 'string' or 'bool':
             continue
-        max_tmp = np.max(np.array(df[item]))
-        min_tmp = np.min(np.array(df[item]))
-        df[item] = df[item].apply(lambda x: (x - min_tmp) / (max_tmp - min_tmp + 1e-6))
+        max_tmp = np.max(np.array(data[item]))
+        min_tmp = np.min(np.array(data[item]))
+        data[item] = data[item].apply(lambda x: (x - min_tmp) / (max_tmp - min_tmp + 1e-6))
     
-    return df
+    return data
 
 
-def standardise(df):
+def standardise(data):
 
     # 获取完整列名
-    cols=list(df)
+    cols=list(data)
 
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if df[item].dtype == 'string' or 'bool':
+        if data[item].dtype == 'string' or 'bool':
             continue
-        mean_tmp = np.mean(np.array(df[item]))
-        std_tmp = np.std(np.array(df[item]))
-        df[item] = df[item].apply(lambda x: (x - mean_tmp) / std_tmp + 1e-6)
+        mean_tmp = np.mean(np.array(data[item]))
+        std_tmp = np.std(np.array(data[item]))
+        data[item] = data[item].apply(lambda x: (x - mean_tmp) / std_tmp + 1e-6)
 
-    return df
+    return data
 
 
 # def normalise(data):
@@ -147,20 +147,28 @@ def standardise(df):
 export_data(format)
 
 """
-path = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp'
-print(path.endswith('.csv'))
-d = read_data(path)
-# d = pd.read_csv(path)
+def export_data(data, save_process_flag, target_path):
+    if save_process_flag == True:
+        d.to_csv(target_path)
 
-print(d)
 
-normalise(d)
 
-save_process_flag = False
-target_path = None
 
-if save_process_flag == True:
-    d.to_csv(target_path)
+
+if __name__ == 'main':
+
+
+    path = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp'
+    print(path.endswith('.csv'))
+    d = read_data(path)
+    # d = pd.read_csv(path)
+
+    print(d)
+
+    normalise(d)
+
+    save_process_flag = False
+    target_path = None
 
 
 
