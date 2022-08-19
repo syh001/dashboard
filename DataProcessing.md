@@ -1,7 +1,6 @@
 # 数据预处理步骤 
 
 
-
 #### 扫描数据  
 1、按列读取，打印每列数据的数据类型  
 data_scan_type()  
@@ -30,10 +29,6 @@ delete_nan_data（row/column）
 #### 异常值发现  
 1、3sigma原则找出  
 abnormal_check_3sigma()  
-
-#### 重复行的处理  
-1、保留  
-process_multi_rows(threshold)  
 
 #### 数据的标准化和归一化  
 process_data_standardization()  
