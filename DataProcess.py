@@ -16,7 +16,7 @@ parser.add_argument('--source_path',
                     )
 
 parser.add_argument('--target_path', 
-                    default = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', 
+                    default = 'C:/Users/1000297658/Desktop/dataset', 
                     type=str, 
                     help='target file path'
                     )
@@ -56,12 +56,6 @@ parser.add_argument('--save_csv',
 # ----------------------------------------------------------------------------
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
-parser.add_argument('--erasing_p', default=0, type=float, help='Random Erasing probability, in [0,1]')
-parser.add_argument('--use_dense', default=0, help='use densenet161' )
-parser.add_argument('--use_NAS', action='store_true', help='use NAS' )
-parser.add_argument('--warm_epoch', default=0, type=int, help='the first K epoch that needs warm up')
-parser.add_argument('--lr', default=0.5, type=float, help='learning rate')
-parser.add_argument('--droprate', default=0.5, type=float, help='drop rate')
 
 opt = parser.parse_args()
 
@@ -243,18 +237,13 @@ if __name__ == '__main__':
     if remove_outliers:
         data = remove_outliers(data)
 
-    if None:
-        print(1)
-
-    if not None:
-        print(2)
-
     print(source_path)
     print(source_path.endswith('.csv'))
 
     print('float64' in ['strding', 'bool'])
     print(None, 'string' or 'bool')
 
+    # data = standa
     data = normalise(data)
 
     data, remain = random_sampling(data, sub_sample_n = None, sub_sample_frac = None)
