@@ -33,8 +33,12 @@ parser.add_argument('--sigma',
                     help='n-sigma to remove outliers, default is wellknown 3-sigma'
                     )
 
+parser.add_argument('--remove_duplicates',
+                    default= False,
+                    type = bool,
+                    help='remove duplicated raws' )
+
 # ----------------------------------------------------------------------------
-parser.add_argument('--color_jitter', action='store_true', help='use color jitter in training' )
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
 parser.add_argument('--erasing_p', default=0, type=float, help='Random Erasing probability, in [0,1]')
@@ -45,11 +49,11 @@ parser.add_argument('--lr', default=0.5, type=float, help='learning rate')
 parser.add_argument('--droprate', default=0.5, type=float, help='drop rate')
 
 opt = parser.parse_args()
-n = opt.sub_sample_n
-print(n, type(n))
-fp16 = opt.path
-data_dir = opt.lr
-name = opt.path
+
+path = opt.path
+sub_sample_n = opt.sub_sample_n
+sub_sample_frac = opt.sub_sample_frac
+remove_duplicates = opt.remove_duplicates
 
 
 def csv2sas(data):
@@ -108,49 +112,43 @@ def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
     return subset, remaining
 
 
-
-def three_sigma_index(col):
-    """
-    Ser1: 表示传入DataFrame的某一列。
-    """
-    rule = (col.mean() - 3 * col.std() > col) | (col.mean() + 3 * col.std() < col)
-    index = np.arange(col.shape[0])[rule]
-
-    return index  #返回落在3sigma之外的行索引值
-
-def delete_out3sigma(data):
-    """
-	data: 待检测的DataFrame
-    """
-    out_index = [] #保存要删除的行索引
-    for i in range(data.shape[1]): # 对每一列分别用3sigma原则处理
-        index = three_sigma_index(data.iloc[:, i])
-        out_index += index.tolist()
-    delete_ = list(set(out_index))
-    print('所删除的行索引为：', delete_)
-    data.drop(delete_,inplace=True)
-
-    return data
-
-
 """
 Outlier detection 异常值检测
 3-Sigma, al method (no Machine Learning here)
 
 """
-def three_sigma_outlier_detection(data, sigma = 3):
 
+def three_sigma_index(col, sigma):
+    """
+    col: 传入DataFrame的某一列。
+    """
+    rule = (col.mean() - sigma * col.std() > col) | (col.mean() + sigma * col.std() < col)
+    index = np.arange(col.shape[0])[rule]
 
-    return data
+    return index  #返回落在3sigma之外的行索引值
 
+def delete_out3sigma(df, sigma):
+    """
+	data: 待检测的DataFrame
+    """
+    out_index = [] #保存要删除的行索引
+    for i in range(df.shape[1]): # 对每一列分别用3sigma原则处理
+        index = three_sigma_index(df.iloc[:, i], sigma)
+        out_index += index.tolist()
+    delete_ = list(set(out_index))
+    print('所删除的行索引为：', delete_)
+    df.drop(delete_, inplace = True)
+
+    return df
 
 
 """
 重复行处理
 Duplicated row process
+
 """
 
-def duplication_process(df):
+def remove_duplicates(df):
 
     # 检查重复行
     print(df.duplicated())
@@ -233,18 +231,20 @@ def export_data(data, save_process_flag, target_path):
 
 if __name__ == '__main__':
 
+    data = read_data(path)
 
-    path = opt.path
-    print(path)
+    if remove_duplicates:
+        data = remove_duplicates(data)
+
+    print(opt.path)
     print(path.endswith('.csv'))
 
-    d = read_data(path)
     print('float64' in ['string', 'bool'])
     print(None, 'string' or 'bool')
 
-    d = normalise(d)
+    data = normalise(data)
 
-    print(d)
+    print(data)
 
     # save_process_flag = False
     # target_path = None
