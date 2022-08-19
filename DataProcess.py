@@ -6,6 +6,31 @@ from sas7bdat import SAS7BDAT
 from win32com.client import Dispatch
 import random
 import shutil
+import argparse
+
+parser = argparse.ArgumentParser(description='Settings')
+parser.add_argument('--path', default='C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', type=str, help='sourse file path')
+parser.add_argument('--sub_sample_n', default=None, type=str, help='number of sub-sampling')
+parser.add_argument('--sub_sample_frac', default=None, type=str, help='fraction of sub-sampling')
+
+# ----------------------------------------------------------------------------
+parser.add_argument('--train_all', action='store_true', help='use all training data' )
+parser.add_argument('--color_jitter', action='store_true', help='use color jitter in training' )
+parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
+parser.add_argument('--stride', default=2, type=int, help='stride')
+parser.add_argument('--erasing_p', default=0, type=float, help='Random Erasing probability, in [0,1]')
+parser.add_argument('--use_dense', default=0, help='use densenet161' )
+parser.add_argument('--use_NAS', action='store_true', help='use NAS' )
+parser.add_argument('--warm_epoch', default=0, type=int, help='the first K epoch that needs warm up')
+parser.add_argument('--lr', default=0.5, type=float, help='learning rate')
+parser.add_argument('--droprate', default=0.5, type=float, help='drop rate')
+
+opt = parser.parse_args()
+
+fp16 = opt.path
+data_dir = opt.lr
+name = opt.path
+
 
 def csv2sas(data):
 
@@ -52,11 +77,11 @@ The input parameter is either the number of sample needed (n) or the ratio/fract
 
 """
 
-def random_sampling(df, n = None, frac = None):
-    if n:
-        subset = df.sample(n = n)
+def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
+    if sub_sample_n:
+        subset = df.sample(n = sub_sample_n)
     else:
-        subset = df.sample(frac = frac)
+        subset = df.sample(frac = sub_sample_frac)
 
     remaining = df.drop(labels=subset.index)
     # remaining = df[~df.index.isin(subset.index)]
@@ -102,7 +127,7 @@ def normalise(data):
     
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if data[item].dtype == 'string' or 'bool':
+        if data[item].dtype in ['string', 'bool']:
             continue
         max_tmp = np.max(np.array(data[item]))
         min_tmp = np.min(np.array(data[item]))
@@ -118,7 +143,8 @@ def standardise(data):
 
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if data[item].dtype == 'string' or 'bool':
+        print(data[item].dtype in ['string', 'bool'])
+        if data[item].dtype in ['string', 'bool']:
             continue
         mean_tmp = np.mean(np.array(data[item]))
         std_tmp = np.std(np.array(data[item]))
@@ -142,6 +168,7 @@ def standardise(data):
     return (data - mu) / sigma
 
 
+
 """
 数据导出
 export_data(format)
@@ -155,17 +182,20 @@ def export_data(data, save_process_flag, target_path):
 
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
 
 
-    path = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp'
+    path = opt.path
+    print(path)
     print(path.endswith('.csv'))
+
     d = read_data(path)
-    # d = pd.read_csv(path)
+    print('float64' in ['string', 'bool'])
+    print(None, 'string' or 'bool')
+
+    d = normalise(d)
 
     print(d)
-
-    normalise(d)
 
     # save_process_flag = False
     # target_path = None
