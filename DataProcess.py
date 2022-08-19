@@ -9,10 +9,16 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Settings')
 
-parser.add_argument('--path', 
+parser.add_argument('--source_path', 
                     default = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', 
                     type=str, 
                     help='sourse file path'
+                    )
+
+parser.add_argument('--target_path', 
+                    default = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', 
+                    type=str, 
+                    help='target file path'
                     )
 
 parser.add_argument('--sub_sample_n',
@@ -34,10 +40,19 @@ parser.add_argument('--sigma',
                     )
 
 parser.add_argument('--remove_duplicates',
-                    default= False,
+                    default = False,
                     type = bool,
                     help='remove duplicated raws' )
 
+parser.add_argument('--remove_outliers',
+                    default = False,
+                    type = bool,
+                    help='remove duplicated raws' )
+
+parser.add_argument('--save_csv',
+                    default = False,
+                    type = bool,
+                    help='whether save DataFrame into a .csv file' )
 # ----------------------------------------------------------------------------
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
@@ -50,11 +65,13 @@ parser.add_argument('--droprate', default=0.5, type=float, help='drop rate')
 
 opt = parser.parse_args()
 
-path = opt.path
+source_path = opt.source_path
 sub_sample_n = opt.sub_sample_n
 sub_sample_frac = opt.sub_sample_frac
 remove_duplicates = opt.remove_duplicates
-
+remove_outliers = opt.remove_outliers
+save_csv = opt.save_csv
+target_path = opt.target_path
 
 def csv2sas(data):
 
@@ -102,12 +119,14 @@ The input parameter is either the number of sample needed (n) or the ratio/fract
 """
 
 def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
+
     if sub_sample_n:
         subset = df.sample(n = sub_sample_n)
-    else:
+    elif sub_sample_frac:
         subset = df.sample(frac = sub_sample_frac)
-
-    remaining = df.drop(labels=subset.index)
+    else:
+        subset = df
+    remaining = df.drop(labels = subset.index)
     # remaining = df[~df.index.isin(subset.index)]
     return subset, remaining
 
@@ -121,6 +140,7 @@ Outlier detection 异常值检测
 def three_sigma_index(col, sigma):
     """
     col: 传入DataFrame的某一列。
+
     """
     rule = (col.mean() - sigma * col.std() > col) | (col.mean() + sigma * col.std() < col)
     index = np.arange(col.shape[0])[rule]
@@ -129,18 +149,21 @@ def three_sigma_index(col, sigma):
 
 def delete_out3sigma(df, sigma):
     """
-	data: 待检测的DataFrame
+	df: 待检测的DataFrame
+
     """
     out_index = [] #保存要删除的行索引
     for i in range(df.shape[1]): # 对每一列分别用3sigma原则处理
         index = three_sigma_index(df.iloc[:, i], sigma)
         out_index += index.tolist()
+
     delete_ = list(set(out_index))
+
     print('所删除的行索引为：', delete_)
+
     df.drop(delete_, inplace = True)
 
     return df
-
 
 """
 重复行处理
@@ -166,88 +189,81 @@ standardise(data)
 字符型与布尔型不参与归一化/标准化
 
 默认按列操作
+
 """
-def normalise(data):
+
+def normalise(df):
     
     # 获取完整列名
-    cols=list(data)
+    cols=list(df)
     # cols = df.columns.values.tolist()
     
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if data[item].dtype in ['string', 'bool']:
+        if df[item].dtype in ['string', 'bool']:
             continue
-        max_tmp = np.max(np.array(data[item]))
-        min_tmp = np.min(np.array(data[item]))
-        data[item] = data[item].apply(lambda x: (x - min_tmp) / (max_tmp - min_tmp + 1e-6))
+        max_tmp = np.max(np.array(df[item]))
+        min_tmp = np.min(np.array(df[item]))
+        df[item] = df[item].apply(lambda x: (x - min_tmp) / (max_tmp - min_tmp + 1e-6))
     
-    return data
+    return df
 
-def standardise(data):
+def standardise(df):
 
     # 获取完整列名
-    cols=list(data)
+    cols=list(df)
 
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        print(data[item].dtype in ['string', 'bool'])
-        if data[item].dtype in ['string', 'bool']:
+        print(df[item].dtype in ['string', 'bool'])
+        if df[item].dtype in ['string', 'bool']:
             continue
-        mean_tmp = np.mean(np.array(data[item]))
-        std_tmp = np.std(np.array(data[item]))
-        data[item] = data[item].apply(lambda x: (x - mean_tmp) / std_tmp + 1e-6)
+        mean_tmp = np.mean(np.array(df[item]))
+        std_tmp = np.std(np.array(df[item]))
+        df[item] = df[item].apply(lambda x: (x - mean_tmp) / std_tmp + 1e-6)
 
-    return data
-
-
-# def normalise(data):
-    print("Normalising ......")
-    print(np.max(data), np.min(data))
-    max_min_range = np.max(data) - np.min(data)
-
-    return (data - np.min(data)) / max_min_range
-
-# def standardise(data):
-    print("Standardsing ......")
-    mu = np.mean(data, axis=0)
-    sigma = np.std(data, axis=0)
-
-    return (data - mu) / sigma
-
-
+    return df
 
 """
 数据导出
 export_data(format)
 
 """
-def export_data(data, save_process_flag, target_path):
-    if save_process_flag == True:
-        data.to_csv(target_path)
-
-
-
+def export_data(df, target_path):
+    df.to_csv(target_path)
 
 
 if __name__ == '__main__':
 
-    data = read_data(path)
+    data = read_data(source_path)
 
     if remove_duplicates:
         data = remove_duplicates(data)
+    
+    if remove_outliers:
+        data = remove_outliers(data)
 
-    print(opt.path)
-    print(path.endswith('.csv'))
+    if None:
+        print(1)
 
-    print('float64' in ['string', 'bool'])
+    if not None:
+        print(2)
+
+    print(source_path)
+    print(source_path.endswith('.csv'))
+
+    print('float64' in ['strding', 'bool'])
     print(None, 'string' or 'bool')
 
     data = normalise(data)
 
-    print(data)
+    data, remain = random_sampling(data, sub_sample_n = None, sub_sample_frac = None)
 
-    # save_process_flag = False
-    # target_path = None
+    print(data, remain)
+
+    if save_csv:
+        export_data(data, target_path)
+
 
 
 
