@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import os
-import scipy
 from sas7bdat import SAS7BDAT
 from win32com.client import Dispatch
 import random
@@ -9,12 +8,32 @@ import shutil
 import argparse
 
 parser = argparse.ArgumentParser(description='Settings')
-parser.add_argument('--path', default='C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', type=str, help='sourse file path')
-parser.add_argument('--sub_sample_n', default=None, type=str, help='number of sub-sampling')
-parser.add_argument('--sub_sample_frac', default=None, type=str, help='fraction of sub-sampling')
+
+parser.add_argument('--path', 
+                    default = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', 
+                    type=str, 
+                    help='sourse file path'
+                    )
+
+parser.add_argument('--sub_sample_n',
+                    default = None,
+                    type = int,
+                    help='number of sub-sampling, range 0 ~ N (N sample number of raw data)'
+                    )
+
+parser.add_argument('--sub_sample_frac',
+                    default = None,
+                    type = float,
+                    help='fraction of sub-sampling, range 0(.0) ~ 1(.0)'
+                    )
+
+parser.add_argument('--sigma',
+                    default = 3,
+                    type = int,
+                    help='n-sigma to remove outliers, default is wellknown 3-sigma'
+                    )
 
 # ----------------------------------------------------------------------------
-parser.add_argument('--train_all', action='store_true', help='use all training data' )
 parser.add_argument('--color_jitter', action='store_true', help='use color jitter in training' )
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
@@ -26,7 +45,8 @@ parser.add_argument('--lr', default=0.5, type=float, help='learning rate')
 parser.add_argument('--droprate', default=0.5, type=float, help='drop rate')
 
 opt = parser.parse_args()
-
+n = opt.sub_sample_n
+print(n, type(n))
 fp16 = opt.path
 data_dir = opt.lr
 name = opt.path
@@ -88,12 +108,37 @@ def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
     return subset, remaining
 
 
+
+def three_sigma_index(col):
+    """
+    Ser1: 表示传入DataFrame的某一列。
+    """
+    rule = (col.mean() - 3 * col.std() > col) | (col.mean() + 3 * col.std() < col)
+    index = np.arange(col.shape[0])[rule]
+
+    return index  #返回落在3sigma之外的行索引值
+
+def delete_out3sigma(data):
+    """
+	data: 待检测的DataFrame
+    """
+    out_index = [] #保存要删除的行索引
+    for i in range(data.shape[1]): # 对每一列分别用3sigma原则处理
+        index = three_sigma_index(data.iloc[:, i])
+        out_index += index.tolist()
+    delete_ = list(set(out_index))
+    print('所删除的行索引为：', delete_)
+    data.drop(delete_,inplace=True)
+
+    return data
+
+
 """
 Outlier detection 异常值检测
 3-Sigma, al method (no Machine Learning here)
 
 """
-def three_sigma_outlier_detection(data):
+def three_sigma_outlier_detection(data, sigma = 3):
 
 
     return data
@@ -105,9 +150,14 @@ def three_sigma_outlier_detection(data):
 Duplicated row process
 """
 
-def duplication_process(data):
+def duplication_process(df):
 
-    return data
+    # 检查重复行
+    print(df.duplicated())
+    # remove duplicated
+    df = df.drop_duplicates()
+
+    return df
 
 """
 数据的标准化和归一化
@@ -134,7 +184,6 @@ def normalise(data):
         data[item] = data[item].apply(lambda x: (x - min_tmp) / (max_tmp - min_tmp + 1e-6))
     
     return data
-
 
 def standardise(data):
 
