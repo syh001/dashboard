@@ -118,8 +118,6 @@ remove_duplicates_flag = opt.remove_duplicates_flag
 remove_outliers_flag = opt.remove_outliers_flag
 save_csv = opt.save_csv
 target_path = opt.target_path
-
-
 sigma = opt.sigma
 column_to_change = opt.column_to_change
 new_column_type = opt.new_column_type
@@ -127,19 +125,6 @@ new_column_name = opt.new_column_name
 date_column_name = opt.date_column_name
 threshold = opt.threshold
 fill_nan_method = opt.fill_nan_method
-
-
-def csv2sas(data):
-
-    return data
-
-# pandas dataframe 为数据处理所用格式，不会出现直接的csv2sas
-# 可直接用pd的函数保存sas，如需
-
-def sas2csv(data):
-
-    return data
-
 
 # we assume currently the sourse file is either sas, jmp or csv format
 def read_data(source_path, target_path, file_name, file_name_save):
