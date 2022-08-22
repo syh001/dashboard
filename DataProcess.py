@@ -125,6 +125,7 @@ def read_data(source_path, target_path, file_name, file_name_save):
 
     source_file = source_path + file_name
     target_file = target_path + file_name_save
+
     if source_file.endswith('.sas7bdat'):
         df = pd.read_sas(source_file)
     elif source_file.endswith('.jmp'):
@@ -147,6 +148,7 @@ def data_scan_type(df):
 
 #改变列的数据类型
 def change_data_type(df, column = column_to_change, type = new_column_type):
+
     for i in range(len(column)):
         df[column[i]].astype(type[i])
 
@@ -154,42 +156,55 @@ def change_data_type(df, column = column_to_change, type = new_column_type):
 
 #重新命名列名
 def data_rename_column(df, column = column_to_change,new_name = new_column_name):
+
     for i in range(len(column)):
         df.rename(columns ={ column[i]: new_name[i]})
+
     return df
 
 #功能是按阈值筛选掉缺失值大于多少的列，并返回剩余的数据
 def detect_nan_by_column(df, threshold = threshold):
+
     feature = []
     row_num = df.shape[0]
     dic = df.isnull().sum().to_dict()
+
     for i in dic:
         if (dic[i] / row_num) > threshold:
             feature.append(i)
+
     new_data = df.drop(feature, axis = 1)
+
     return new_data
 
 #按阈值筛选掉缺失值大于多少的行，并返回剩余的数据
 def detect_nan_by_row(df, threshold = threshold):
+
     new_data = pd.DataFrame()
+
     if threshold == 0:
         new_data = df.dropna()
     else:
         nan_len=0
         col_name = df.columns.tolist()
+
         for row_index, row in df.iterrows():
             for col in col_name:
                 tmp = df.loc[row_index, col]
                 if tmp != tmp:
                     nan_len += 1
+
             ratio = nan_len / len(col_name)
+
             if ratio < threshold:
                 new_data = pd.concat([new_data, df.iloc[row_index,:]])
 
     return new_data
 
 def fill_nan_data(df, criteria = fill_nan_method):
+
     col = df.columns[df.isnull().sum() > 0]
+
     for i in col:
         if criteria == 'mean':
             val = df[i].mean()
@@ -197,25 +212,31 @@ def fill_nan_data(df, criteria = fill_nan_method):
             val = df[i].median()
         elif criteria == 'mode':
             val = df[i].mode()[0]
+
         df[i].fillna(val, inplace = True)
 
     return df
 
 def check_data_by_date(df, date_column_name=date_column_name):
+
     df['new_date'] = ""
     df['new_index'] = 0
     multi_df = []
+
     for row_index, row in df.iterrows():
         df.loc[row_index, 'new_date'] = parser.parse(str(df.loc[row_index,date_column_name]))
+    
     df.index = pd.to_datetime(df.new_date)
     df['new_index'] = df.index.isocalendar().week
     col = df['new_index'].tolist()
     df_ = df.reset_index(drop=True)
+
     for i in col:
         new = df_[df_['new_index']==i]
         new1 = new.reset_index(drop=True)
         new2 = new1.drop(['new_date', 'new_index'], axis=1)
         multi_df.append(new2)
+
     return multi_df
 
 
@@ -244,6 +265,7 @@ def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
         subset = df
     remaining = df.drop(labels = subset.index)
     # remaining = df[~df.index.isin(subset.index)]
+
     return subset, remaining
 
 
@@ -269,6 +291,7 @@ def delete_out3sigma(df, sigma):
 
     """
     out_index = [] #保存要删除的行索引
+
     for i in range(df.shape[1]): # 对每一列分别用3sigma原则处理
         index = three_sigma_index(df.iloc[:, i], sigma)
         out_index += index.tolist()
@@ -276,7 +299,6 @@ def delete_out3sigma(df, sigma):
     delete_ = list(set(out_index))
 
     print('所删除的行索引为：', delete_)
-
     df.drop(delete_, inplace = True)
 
     return df
