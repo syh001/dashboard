@@ -12,7 +12,7 @@ import numpy as np
 def index(request):
     # 标准sql语句，此处为测试返回数据库data表的数据条目n，之后可以用python处理字符串的方式动态扩展
     # sql = "Select count(*) from data" 
-    df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/wafer_0.6.csv') #将sql语句结果读取至Pandas Dataframe
+    df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
     
     df = df.iloc[0:3]
     # certain_one.columns = [''] * len(certain_one.columns)
