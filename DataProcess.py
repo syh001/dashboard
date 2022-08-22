@@ -7,7 +7,6 @@ from win32com.client import Dispatch
 import random
 import shutil
 import argparse
-
 parser = argparse.ArgumentParser(description='Settings')
 
 parser.add_argument('--file_name', 
@@ -67,6 +66,9 @@ parser.add_argument('--save_csv',
                     type = bool,
                     help='whether save DataFrame into a .csv file' )
 
+
+# ---------------------------------syh-------------------------------------------
+
 parser.add_argument('--threshold',
                     default = 0.8,
                     type = float,
@@ -75,6 +77,10 @@ parser.add_argument('--threshold',
 parser.add_argument('--fill_nan_method',
                     default = 'mean',
                     type = str,
+                    help='how you would like to fill the missing values(mean median or mode)')
+
+parser.add_argument('--column_to_change',
+                    default = ['JOBNUM'],
                     help='how you would like to fill the missing values')
 
 parser.add_argument('--column_to_change',
@@ -83,12 +89,12 @@ parser.add_argument('--column_to_change',
                     help='choose the column name that you want to change')
 
 parser.add_argument('--new_column_name',
-                    default = [],
+                    default = ['jobnum'],
                     type = list,
                     help='the corresponding column name of each changed column')
 
 parser.add_argument('--new_column_type',
-                    default = [],
+                    default = ['float'],
                     type = list,
                     help='the corresponding data type of each changed column')
 
@@ -96,7 +102,7 @@ parser.add_argument('--date_column_name',
                     default = 'date',
                     type = str,
                     help='the column name which represents datetime')
-                    
+
 # ----------------------------------------------------------------------------
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
@@ -112,6 +118,8 @@ remove_duplicates_flag = opt.remove_duplicates_flag
 remove_outliers_flag = opt.remove_outliers_flag
 save_csv = opt.save_csv
 target_path = opt.target_path
+
+
 sigma = opt.sigma
 column_to_change = opt.column_to_change
 new_column_type = opt.new_column_type
@@ -119,6 +127,19 @@ new_column_name = opt.new_column_name
 date_column_name = opt.date_column_name
 threshold = opt.threshold
 fill_nan_method = opt.fill_nan_method
+
+
+def csv2sas(data):
+
+    return data
+
+# pandas dataframe 为数据处理所用格式，不会出现直接的csv2sas
+# 可直接用pd的函数保存sas，如需
+
+def sas2csv(data):
+
+    return data
+
 
 # we assume currently the sourse file is either sas, jmp or csv format
 def read_data(source_path, target_path, file_name, file_name_save):
