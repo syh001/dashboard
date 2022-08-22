@@ -1,3 +1,4 @@
+from multiprocessing.reduction import duplicate
 import numpy as np
 import pandas as pd
 import os
@@ -9,14 +10,26 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Settings')
 
+parser.add_argument('--file_name', 
+                    default = 'Return_yeah.csv', 
+                    type=str, 
+                    help='sourse file path'
+                    )
+
+parser.add_argument('--file_name_save', 
+                    default = 'Return_yeah_1.csv', 
+                    type=str, 
+                    help='sourse file path'
+                    )
+
 parser.add_argument('--source_path', 
-                    default = 'C:/Users/1000297658/Desktop/dataset/wafer_0.6.jmp', 
+                    default = 'C:/Users/1000297658/Desktop/dataset/', 
                     type=str, 
                     help='sourse file path'
                     )
 
 parser.add_argument('--target_path', 
-                    default = 'C:/Users/1000297658/Desktop/dataset', 
+                    default = 'C:/Users/1000297658/Desktop/dataset/', 
                     type=str, 
                     help='target file path'
                     )
@@ -39,22 +52,24 @@ parser.add_argument('--sigma',
                     help='n-sigma to remove outliers, default is wellknown 3-sigma'
                     )
 
-parser.add_argument('--remove_duplicates',
+parser.add_argument('--remove_duplicates_flag',
                     default = False,
                     type = bool,
-                    help='remove duplicated raws' )
+                    help='remove duplicated rows' )
 
-parser.add_argument('--remove_outliers',
+parser.add_argument('--remove_outliers_flag',
                     default = False,
                     type = bool,
-                    help='remove duplicated raws' )
+                    help='remove outliers' )
 
 parser.add_argument('--save_csv',
-                    default = False,
+                    default = True,
                     type = bool,
                     help='whether save DataFrame into a .csv file' )
 
+
 # ---------------------------------syh-------------------------------------------
+
 parser.add_argument('--threshold',
                     default = 0.8,
                     type = float,
@@ -67,6 +82,10 @@ parser.add_argument('--fill_nan_method',
 
 parser.add_argument('--column_to_change',
                     default = ['JOBNUM'],
+                    help='how you would like to fill the missing values')
+
+parser.add_argument('--column_to_change',
+                    default = [],
                     type = list,
                     help='choose the column name that you want to change')
 
@@ -84,26 +103,32 @@ parser.add_argument('--date_column_name',
                     default = 'date',
                     type = str,
                     help='the column name which represents datetime')
+
 # ----------------------------------------------------------------------------
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
 
 opt = parser.parse_args()
 
+file_name_save = opt.file_name_save
+file_name = opt.file_name
 source_path = opt.source_path
 sub_sample_n = opt.sub_sample_n
 sub_sample_frac = opt.sub_sample_frac
-remove_duplicates = opt.remove_duplicates
-remove_outliers = opt.remove_outliers
+remove_duplicates_flag = opt.remove_duplicates_flag
+remove_outliers_flag = opt.remove_outliers_flag
 save_csv = opt.save_csv
 target_path = opt.target_path
 
+
+sigma = opt.sigma
 column_to_change = opt.column_to_change
 new_column_type = opt.new_column_type
 new_column_name = opt.new_column_name
 date_column_name = opt.date_column_name
 threshold = opt.threshold
 fill_nan_method = opt.fill_nan_method
+
 
 def csv2sas(data):
 
@@ -116,24 +141,126 @@ def sas2csv(data):
 
     return data
 
-# we assume currently the sourse file is either sas, jmp or csv format
-def read_data(path):
 
-    if path.endswith('.sas7bdat'):
-        df = pd.read_sas(path)
-    elif path.endswith('.jmp'):
+# we assume currently the sourse file is either sas, jmp or csv format
+def read_data(source_path, target_path, file_name, file_name_save):
+
+    source_file = source_path + file_name
+    target_file = target_path + file_name_save
+
+    if source_file.endswith('.sas7bdat'):
+        df = pd.read_sas(source_file)
+    elif source_file.endswith('.jmp'):
         jmp = Dispatch("JMP.Application")
-        doc = jmp.OpenDocument(path)
+        doc = jmp.OpenDocument(source_file)
         # temporarily add csv file
-        doc.SaveAs('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
-        df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
+        doc.SaveAs(target_file)
+        df = pd.read_csv(target_file)
         # Delete the extraly generated csv file 
         # to ensure that the data warehouse has not changed
-        os.remove('C:/Users/1000297658/Desktop/dataset/sasjmpfile.csv')
+        os.remove(target_path + file_name_save)
     else:
-        df = pd.read_csv(path)
+        df = pd.read_csv(source_file)
 
     return df
+
+#扫描各特征的数据类型
+def data_scan_type(df):
+    return pd.DataFrame(df.dtypes)
+
+#改变列的数据类型
+def change_data_type(df, column = column_to_change, type = new_column_type):
+
+    for i in range(len(column)):
+        df[column[i]].astype(type[i])
+
+    return df
+
+#重新命名列名
+def data_rename_column(df, column = column_to_change,new_name = new_column_name):
+
+    for i in range(len(column)):
+        df.rename(columns ={ column[i]: new_name[i]})
+
+    return df
+
+#功能是按阈值筛选掉缺失值大于多少的列，并返回剩余的数据
+def detect_nan_by_column(df, threshold = threshold):
+
+    feature = []
+    row_num = df.shape[0]
+    dic = df.isnull().sum().to_dict()
+
+    for i in dic:
+        if (dic[i] / row_num) > threshold:
+            feature.append(i)
+
+    new_data = df.drop(feature, axis = 1)
+
+    return new_data
+
+#按阈值筛选掉缺失值大于多少的行，并返回剩余的数据
+def detect_nan_by_row(df, threshold = threshold):
+
+    new_data = pd.DataFrame()
+
+    if threshold == 0:
+        new_data = df.dropna()
+    else:
+        nan_len=0
+        col_name = df.columns.tolist()
+
+        for row_index, row in df.iterrows():
+            for col in col_name:
+                tmp = df.loc[row_index, col]
+                if tmp != tmp:
+                    nan_len += 1
+
+            ratio = nan_len / len(col_name)
+
+            if ratio < threshold:
+                new_data = pd.concat([new_data, df.iloc[row_index,:]])
+
+    return new_data
+
+def fill_nan_data(df, criteria = fill_nan_method):
+
+    col = df.columns[df.isnull().sum() > 0]
+
+    for i in col:
+        if criteria == 'mean':
+            val = df[i].mean()
+        elif criteria == 'median':
+            val = df[i].median()
+        elif criteria == 'mode':
+            val = df[i].mode()[0]
+
+        df[i].fillna(val, inplace = True)
+
+    return df
+
+def check_data_by_date(df, date_column_name=date_column_name):
+
+    df['new_date'] = ""
+    df['new_index'] = 0
+    multi_df = []
+
+    for row_index, row in df.iterrows():
+        df.loc[row_index, 'new_date'] = parser.parse(str(df.loc[row_index,date_column_name]))
+    
+    df.index = pd.to_datetime(df.new_date)
+    df['new_index'] = df.index.isocalendar().week
+    col = df['new_index'].tolist()
+    df_ = df.reset_index(drop=True)
+
+    for i in col:
+        new = df_[df_['new_index']==i]
+        new1 = new.reset_index(drop=True)
+        new2 = new1.drop(['new_date', 'new_index'], axis=1)
+        multi_df.append(new2)
+
+    return multi_df
+
 
 """
 随机采样 Random (down)sampling
@@ -160,6 +287,7 @@ def random_sampling(df, sub_sample_n = None, sub_sample_frac = None):
         subset = df
     remaining = df.drop(labels = subset.index)
     # remaining = df[~df.index.isin(subset.index)]
+
     return subset, remaining
 
 
@@ -185,6 +313,7 @@ def delete_out3sigma(df, sigma):
 
     """
     out_index = [] #保存要删除的行索引
+
     for i in range(df.shape[1]): # 对每一列分别用3sigma原则处理
         index = three_sigma_index(df.iloc[:, i], sigma)
         out_index += index.tolist()
@@ -192,7 +321,6 @@ def delete_out3sigma(df, sigma):
     delete_ = list(set(out_index))
 
     print('所删除的行索引为：', delete_)
-
     df.drop(delete_, inplace = True)
 
     return df
@@ -206,7 +334,7 @@ Duplicated row process
 def remove_duplicates(df):
 
     # 检查重复行
-    print(df.duplicated())
+    # print(df.duplicated())
     # remove duplicated
     df = df.drop_duplicates()
 
@@ -229,10 +357,10 @@ def normalise(df):
     # 获取完整列名
     cols=list(df)
     # cols = df.columns.values.tolist()
-    
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        if df[item].dtype in ['string', 'bool']:
+        # print(df[item].dtype)
+        if df[item].dtype in ['string', 'bool', 'object']:
             continue
         max_tmp = np.max(np.array(df[item]))
         min_tmp = np.min(np.array(df[item]))
@@ -261,25 +389,21 @@ def standardise(df):
 export_data(format)
 
 """
-def export_data(df, target_path):
-    df.to_csv(target_path)
+def export_data(df, target_path, target_file):
+    df.to_csv(target_path + target_file)
 
 
 if __name__ == '__main__':
 
-    data = read_data(source_path)
+    data = read_data(source_path, target_path, file_name, file_name_save)
 
-    if remove_duplicates:
+    print(data)
+
+    if remove_duplicates_flag:
         data = remove_duplicates(data)
     
-    if remove_outliers:
-        data = remove_outliers(data)
-
-    print(source_path)
-    print(source_path.endswith('.csv'))
-
-    print('float64' in ['strding', 'bool'])
-    print(None, 'string' or 'bool')
+    if remove_outliers_flag:
+        data = delete_out3sigma(data)
 
     # data = standa
     data = normalise(data)
@@ -289,7 +413,7 @@ if __name__ == '__main__':
     print(data, remain)
 
     if save_csv:
-        export_data(data, target_path)
+        export_data(data, target_path, file_name_save)
 
 
 
