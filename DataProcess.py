@@ -53,6 +53,37 @@ parser.add_argument('--save_csv',
                     default = False,
                     type = bool,
                     help='whether save DataFrame into a .csv file' )
+
+# ---------------------------------syh-------------------------------------------
+parser.add_argument('--threshold',
+                    default = 0.8,
+                    type = float,
+                    help='the percentage of which the missing values should be deleted')
+
+parser.add_argument('--fill_nan_method',
+                    default = 'mean',
+                    type = str,
+                    help='how you would like to fill the missing values(mean median or mode)')
+
+parser.add_argument('--column_to_change',
+                    default = ['JOBNUM'],
+                    type = list,
+                    help='choose the column name that you want to change')
+
+parser.add_argument('--new_column_name',
+                    default = ['jobnum'],
+                    type = list,
+                    help='the corresponding column name of each changed column')
+
+parser.add_argument('--new_column_type',
+                    default = ['float'],
+                    type = list,
+                    help='the corresponding data type of each changed column')
+
+parser.add_argument('--date_column_name',
+                    default = 'date',
+                    type = str,
+                    help='the column name which represents datetime')
 # ----------------------------------------------------------------------------
 parser.add_argument('--batchsize', default=16, type=int, help='batchsize')
 parser.add_argument('--stride', default=2, type=int, help='stride')
@@ -66,6 +97,13 @@ remove_duplicates = opt.remove_duplicates
 remove_outliers = opt.remove_outliers
 save_csv = opt.save_csv
 target_path = opt.target_path
+
+column_to_change = opt.column_to_change
+new_column_type = opt.new_column_type
+new_column_name = opt.new_column_name
+date_column_name = opt.date_column_name
+threshold = opt.threshold
+fill_nan_method = opt.fill_nan_method
 
 def csv2sas(data):
 
