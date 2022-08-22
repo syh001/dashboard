@@ -7,7 +7,6 @@ from win32com.client import Dispatch
 import random
 import shutil
 import argparse
-
 parser = argparse.ArgumentParser(description='Settings')
 
 parser.add_argument('--file_name', 
