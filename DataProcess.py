@@ -353,8 +353,7 @@ def standardise(df):
 
     # 每列里数据类型为string或bool的跳过
     for item in cols:
-        print(df[item].dtype in ['string', 'bool'])
-        if df[item].dtype in ['string', 'bool']:
+        if df[item].dtype in ['string', 'bool', 'object']:
             continue
         mean_tmp = np.mean(np.array(df[item]))
         std_tmp = np.std(np.array(df[item]))
