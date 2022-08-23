@@ -39,6 +39,22 @@ def read_data(source_path, target_path, file_name, file_name_save):
 
     return df
 
+def get_kpi(df, axis = 0):
+    print(df)
+    df = df.iloc[:, 8:9]
+    print(df)
+    df_mean = df.mean(axis)[0]
+    
+    df_std = df.std(axis)[0]
+    
+    df_median = df.median(axis)[0]
+    
+    return {
+        "df_mean": df_mean,
+        "df_std": df_std,
+        "df_median": df_median,
+    }
+
 
 def columns2dictionary(df):
     """
@@ -66,31 +82,15 @@ D_MULTI_SELECT = {
     'Feature 50 | 特征 50': 'feature_50',
 }
 
-
-# def index(request):
-    
-#     ...
-
-    
-#     context = {
-#        ...
-#        'mselect_dict': mselect_dict
-#     }
-#     return render(request, 'chpa_data/analysis.html', context) # 注意本句和前一章也有变化，渲染至analysis.html而不是display.html
-
-
-
-
 def index(request, source_path=sourth_path, target_path=target_path, file_name=file_name, file_name_save=file_name_save):
-    # 标准sql语句，此处为测试返回数据库data表的数据条目n，之后可以用python处理字符串的方式动态扩展
-    # sql = "Select count(*) from data" 
+ 
     mselect_dict = {}
 
     # df = pd.read_excel('C:/Users/sas053/Desktop/jmp_feature_importance.xlsx') #将sql语句结果读取至Pandas Dataframe
     df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
 
     df = read_data(source_path, target_path, file_name, file_name_save)
-    df = df.iloc[0:3]
+    df = df.iloc[0:10]
     # certain_one.columns = [''] * len(certain_one.columns)
     # certain_one = pd.DataFrame(certain_one.iloc[0:2,1], header = None)
     print(type(pd.DataFrame(df.iloc[0,1:3])), '\n', df)
@@ -99,19 +99,24 @@ def index(request, source_path=sourth_path, target_path=target_path, file_name=f
     # certain_one = certain_one.columns
     # context = {'data': df}
 
+    kpi = get_kpi(df)
+
     dct = columns2dictionary(df)
     # D_MULTI_SELECT
-    for key, value in D_MULTI_SELECT.items():
+    for key, value in dct.items():
         mselect_dict[key] = {}
         mselect_dict[key]['select'] = value
         # mselect_dict[key]['options'] = option_list 以后可以后端通过列表为每个多选控件传递备选项
     
-
+    df = df.iloc[:, 8:9]
     context = {
-        'data': df,
+        "df_mean": kpi["df_mean"],
+        "df_std": kpi["df_std"],
+        "df_median": kpi["df_median"],
+        'data': df.to_html(),
         'mselect_dict': mselect_dict,
     }
     
 
-    return render(request, 'visual/analysis.html', context)
+    return render(request, 'visual/display.html', context)
     # return HttpResponse(df.to_html(max_cols=10,show_dimensions=True)) #渲染，这里暂时渲染为最简单的HttpResponse，以后可以扩展

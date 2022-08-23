@@ -1,4 +1,78 @@
 {% extends "visual/analysis.html" %}
 {% block display %}
-    {{ data }}
-{% endblock display %}
+<!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
+
+<div class="ui pointing secondary menu">
+    <a class="item active" data-tab="total"><i class="circle icon"></i>Summary</a>
+    <a class="item" data-tab="competition"><i class="trophy icon"></i>Analysis</a>
+</div>
+
+<div class="ui tab segment active" data-tab="total">
+
+    <h3 class="ui header">
+        <div class="content">
+            Value 1
+            <div class="sub header">KPIs, containing mean, std, median of input dataframe</div>
+        </div>
+    </h3>
+
+    <div class="ui divider"></div>
+
+    <!-- Semantic UI的statistic类能呈现“醒目大数字”的效果 -->
+    <div class="ui small three statistics">
+
+        <div class="statistic">
+            <div class="value" id="value_size">
+                {{ df_mean }}
+            </div>
+            <div class="label" id="label_size_unit">
+                df_mean
+            </div>
+        </div>
+
+        <div class="statistic" id="div_gr">
+            <div class="value" id="value_gr">
+                {{ df_std }}
+            </div>
+            <div class="label">
+                df_std
+            </div>
+        </div>
+
+        <div class="statistic" id="div_cagr">
+            <div class="value" id="value_cagr">
+                {{ df_median }}
+            </div>
+            <div class="label">
+                df_median
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="ui tab segment" data-tab="competition">
+
+    <h3 class="ui header">
+        <div class="content">
+            DataFrame (dataTables)
+            <div class="sub header">数据表格</div>
+        </div>
+    </h3>
+
+    <div class="ui divider"></div>
+
+    <div class="ui container" id='result_table' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+        <!-- Django渲染html代码时需要加入|safe，保证html不会被自动转义 -->
+        {{ data|safe }}
+    </div>
+
+</div>
+
+<!-- 下方js为保证Semantic UI tab类工作 -->
+<script>
+    $('.pointing.secondary.menu .item').tab();
+</script>
+{% endblock %}
