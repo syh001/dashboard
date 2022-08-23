@@ -50,7 +50,6 @@ Currently used as TODO list & development log for WD dashboard project.
 ### - 这个维度为数值型数据
 ### - 这个维度为字符型数据/布尔型
 ### - 这个维度为时间数据
-该情况涉及基于时间的统计，后端生成新的数据表后append(适合大数据集)，或者即时计算(适合小数据集)
 
 
 # 0.4 接口（数据选择，预处理，ML，可视化）
