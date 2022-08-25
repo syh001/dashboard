@@ -1,5 +1,11 @@
 {% extends "visual/analysis.html" %}
 {% block display %}
+
+<!-- 数据处理时的loading遮罩 -->
+<div class="ui active dimmer" id="dimmer">
+    <div class="ui text" style="color: #FFFFFF">请使用左侧筛选框选择两个维度生成绘图(分析维度)<br>选择若干个维度在图中填充辅助信息(辅助维度)</div>
+</div>
+
 <!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
 
 <div class="ui pointing secondary menu">
@@ -22,16 +28,16 @@
     <div class="ui small three statistics">
 
         <div class="statistic">
-            <div class="value" id="value_size">
+            <div class="value" id="df_mean">
                 {{ df_mean }}
             </div>
-            <div class="label" id="label_size_unit">
+            <div class="label" id="df_mean">
                 df_mean
             </div>
         </div>
 
-        <div class="statistic" id="div_gr">
-            <div class="value" id="value_gr">
+        <div class="statistic" id="df_std">
+            <div class="value" id="df_std">
                 {{ df_std }}
             </div>
             <div class="label">
@@ -39,8 +45,8 @@
             </div>
         </div>
 
-        <div class="statistic" id="div_cagr">
-            <div class="value" id="value_cagr">
+        <div class="statistic" id="df_median">
+            <div class="value" id="df_median">
                 {{ df_median }}
             </div>
             <div class="label">
@@ -64,7 +70,7 @@
 
     <div class="ui divider"></div>
 
-    <div class="ui container" id='result_table' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+    <div class="ui container" id='data' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
         <!-- Django渲染html代码时需要加入|safe，保证html不会被自动转义 -->
         {{ data|safe }}
     </div>
@@ -75,4 +81,5 @@
 <script>
     $('.pointing.secondary.menu .item').tab();
 </script>
+
 {% endblock %}

@@ -6,6 +6,12 @@ import numpy as np
 import os
 from win32com.client import Dispatch
 import json
+
+try:
+    import six  # for modern Django
+except ImportError:
+    from django.utils import six  # for legacy Django
+
 # Create your views here.
 
 # is sql important?
@@ -17,6 +23,20 @@ sourth_path = 'C:/Users/1000297658/Desktop/dataset/'
 target_path = 'C:/Users/1000297658/Desktop/dataset/'
 file_name = 'Return_yeah.csv'
 file_name_save = 'Return_yeah.csv'
+
+# 该字典key为前端准备显示的所有多选字段名, value为数据库对应的字段名
+D_MULTI_SELECT = {
+    'Feature 1 | 特征 1': 'feature_1',
+    'Feature 2 | 特征 2': 'feature_2',
+    'Feature 3 | 特征 3': 'feature_3',
+    'Feature 4 | 特征 4': 'feature_4',
+    'Feature 5 | 特征 5': 'feature_5',
+    'Feature 10 | 特征 10': 'feature_10',
+    'Feature 20 | 特征 20': 'feature_20',
+    'Feature 30 | 特征 30': 'feature_30',
+    'Feature 40 | 特征 40': 'feature_40',
+    'Feature 50 | 特征 50': 'feature_50',
+}
 
 def read_data(source_path, target_path, file_name, file_name_save):
 
@@ -40,9 +60,9 @@ def read_data(source_path, target_path, file_name, file_name_save):
     return df
 
 def get_kpi(df, axis = 0):
+
     print(df)
-    df = df.iloc[:, 8:9]
-    print(df)
+
     df_mean = df.mean(axis)[0]
     
     df_std = df.std(axis)[0]
@@ -68,19 +88,73 @@ def columns2dictionary(df):
 
     return dictionary
 
-# 该字典key为前端准备显示的所有多选字段名, value为数据库对应的字段名
-D_MULTI_SELECT = {
-    'Feature 1 | 特征 1': 'feature_1',
-    'Feature 2 | 特征 2': 'feature_2',
-    'Feature 3 | 特征 3': 'feature_3',
-    'Feature 4 | 特征 4': 'feature_4',
-    'Feature 5 | 特征 5': 'feature_5',
-    'Feature 10 | 特征 10': 'feature_10',
-    'Feature 20 | 特征 20': 'feature_20',
-    'Feature 30 | 特征 30': 'feature_30',
-    'Feature 40 | 特征 40': 'feature_40',
-    'Feature 50 | 特征 50': 'feature_50',
-}
+def get_distinct_list(df, column):
+
+    # print(df[column].unique())
+    l = df[column].unique()
+
+    return l
+
+def search(request, column, kw, df):
+    
+    try:
+        df = df
+        l = df.values.flatten().tolist()
+        results_list = []
+        for element in l:
+            option_dict = {'name': element,
+                           'value': element,
+                           }
+            results_list.append(option_dict)
+        res = {
+            "success": True,
+            "results": results_list,
+            "code": 200,
+        }
+    except Exception as e:
+        res = {
+            "success": False,
+            "errMsg": e,
+            "code": 0,
+        }
+    return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
+
+
+def query(request):
+    """
+    query方法要实现以下后续功能:
+
+    a. 解析前端参数到理想格式
+    b. 根据前端参数数据拼接SQL并用Pandas读取
+    c. Pandas读取数据后, 将前端选择的DIMENSION作为pivot_table方法的column参数
+    d. 返回Json格式的结果
+    """
+    df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
+
+    form_dict = dict(six.iterlists(request.GET))
+
+    print(form_dict)
+
+    dimension_selected = form_dict['DIMENSION_select'][0]
+    #  如果字段名有空格为了SQL语句在预设字典中加了中括号的，这里要去除
+    if dimension_selected[0] == '[':
+
+        column = dimension_selected[1:][:-1]
+    else:
+        column = dimension_selected
+
+    # KPI
+    kpi = get_kpi(df, column)
+
+    context = {
+        "market_size": kpi["market_size"],
+        "market_gr": kpi["market_gr"],
+        "market_cagr": kpi["market_cagr"],
+        'ptable': df.to_html()
+    }
+
+    return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
+
 
 def index(request, source_path=sourth_path, target_path=target_path, file_name=file_name, file_name_save=file_name_save):
  
@@ -91,24 +165,23 @@ def index(request, source_path=sourth_path, target_path=target_path, file_name=f
 
     df = read_data(source_path, target_path, file_name, file_name_save)
     df = df.iloc[0:10]
-    # certain_one.columns = [''] * len(certain_one.columns)
-    # certain_one = pd.DataFrame(certain_one.iloc[0:2,1], header = None)
+
     print(type(pd.DataFrame(df.iloc[0,1:3])), '\n', df)
-    # certain_one = np.mean(certain_one)
-    # print(type(certain_one.keys()))
-    # certain_one = certain_one.columns
-    # context = {'data': df}
 
+    
     kpi = get_kpi(df)
-
+    
     dct = columns2dictionary(df)
     # D_MULTI_SELECT
     for key, value in dct.items():
         mselect_dict[key] = {}
         mselect_dict[key]['select'] = value
-        # mselect_dict[key]['options'] = option_list 以后可以后端通过列表为每个多选控件传递备选项
+        mselect_dict[key]['options'] = get_distinct_list(df, value) # 以后可以后端通过列表为每个多选控件传递备选项
     
+    # print(mselect_dict)
+
     df = df.iloc[:, 8:9]
+    
     context = {
         "df_mean": kpi["df_mean"],
         "df_std": kpi["df_std"],

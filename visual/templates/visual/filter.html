@@ -4,13 +4,19 @@
             <!-- 在Django所有的 POST 表单元素时，需要加上下方的csrf_token tag，主要是安全方面的机制，本例后续使用AJAX方法，这里的POST class和token都不生效 -->
             {% csrf_token %}
             <h3 class="ui header" id="analysis">分析维度</h3>
+
             <div class="field">
                 <div class="fields">
-                    <div class="sixteen wide field">
-                        <select name="DIMENSION_select" id="DIMENSION_select" class="ui fluid search dropdown">
+                    
+                </div>
+
+                <div class="fields">
+
+                    <div class="eight wide field">
+                        <select name="Feature1" id="Feature1" class="ui fluid search dropdown">
+
                             {% for key, value in mselect_dict.items %}
-                                <!-- 此处判断为真即为默认显示 -->
-                                {% if value.select == 'feature_5' %}
+                                {% if value.select == '' %}
                                     <option value="{{ value.select }}" selected>{{ key }}</option>
                                 {% else %}
                                     <option value="{{ value.select }}">{{ key }}</option>
@@ -18,78 +24,118 @@
                             {% endfor %}
                         </select>
                     </div>
-                </div>
-                <div class="fields">
+
                     <div class="eight wide field">
-                        <select name="UNIT_select" id="UNIT_select" class="ui fluid search dropdown">
-                            <option value="Value" selected>请选择一个特征(必选)</option>
-                            <option value="Volume">feature 1</option>
-                            <option value="Volume (Counting Unit)">feature 2</option>
-                        </select>
-                    </div>
-                    <div class="eight wide field">
-                        <select name="PERIOD_select" id="PERIOD_select" class="ui fluid search dropdown">
-                            <option value="MAT" selected>请选择一个特征(可选)</option>
-                            <option value="QTR">feature 1</option>
+                        <select name="Feature2" id="Feature2" class="ui fluid search dropdown">
+
+                            {% for key, value in mselect_dict.items %}
+                                {% if value.select == '' %}
+                                    <option value="{{ value.select }}" selected>{{ key }}</option>
+                                {% else %}
+                                    <option value="{{ value.select }}">{{ key }}</option>
+                                {% endif %}
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
             </div>
 
             <h3 class="ui header" id="analysis">辅助维度</h3>
+
             <div class="field">
+
                 <div class="fields">
-                    <div class="sixteen wide field">
-                        <select name="DIMENSION_select" id="DIMENSION_select" class="ui fluid search dropdown">
-                            {% for key, value in mselect_dict.items %}
-                                {% if value.select == 'PRODUCT' %}
-                                    <option value="{{ value.select }}" selected>{{ key }}</option>
-                                {% else %}
-                                    <option value="{{ value.select }}">{{ key }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
+                    
                 </div>
+
                 <div class="fields">
-                    <div class="eight wide field">
-                        <select name="UNIT_select" id="UNIT_select" class="ui fluid search dropdown">
-                            <option value="Value" selected>feature 1</option>
-                            <option value="Volume">feature 2</option>
-                            <option value="Volume (Counting Unit)">feature 3</option>
-                        </select>
-                    </div>
-                    <div class="eight wide field">
-                        <select name="PERIOD_select" id="PERIOD_select" class="ui fluid search dropdown">
-                            <option value="MAT" selected>feature 1</option>
-                            <option value="QTR">feature 2</option>
-                        </select>
-                    </div>
+
+                    <select name="Feature2" id="Feature2" class="ui fluid search dropdown">
+
+                        {% for key, value in mselect_dict.items %}
+                            {% if value.select == '' %}
+                                <option value="{{ value.select }}" selected>{{ key }}</option>
+                            {% else %}
+                                <option value="{{ value.select }}">{{ key }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
 
             <h3 class="ui header" id="data_filter">数据筛选</h3>
-            <div class="field">
-                {% for key, value in mselect_dict.items %}
-                <div class="field">
-                    <select name="{{ value.select|add:"_select[]" }}" id="{{ value.select|add:"_select" }}" multiple=""
-                            class="ui fluid search dropdown">
-                        <option value="">{{ key }}</option>
-<!-- {#                        {% for item in value.options %}#}
-{#                            <option value="{{ item }}">{{ item }}</option>#}
-{#                        {% endfor %}#} -->
-                    </select>
+            <div class="ui fluid multiple search selection dropdown">
+                <input type="hidden" name="featurename">
+                <i class="dropdown icon"></i>
+                <div class="default text">feature selection</div>
+                <div class="menu", name="select_feature">
+                    {% for key,value in mselect_dict.items %}
+                    <div class="item">{{key}}</div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+
+
+
             <br>
+
             <div class="ui buttons">
-                <input class="ui blue button" type='button' id='AJAX_get' value="查询"/>
+                <input class="ui blue button" type='button' id='AJAX_get' value="选择"/>
             </div>
         </form>
     </div>
 </div>
+
+
+<script type="text/javascript">
+    $("#AJAX_get").click(function (event) {
+        event.preventDefault(); // 防止表单默认的提交
+        // 获取单选下拉框的值
+        var form_data = {
+            "Feature1": $("#Feature1").val(),
+            "Feature2": $("#Feature2").val(),
+            "Feature_opt": $("#Feature_opt").val(),
+        };
+        
+        var dimmer = $("#dimmer");
+        dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
+        dimmer.children('div').remove(); // 删除初始化文字
+        dimmer.append('<div class="ui text loader">数据加载中……</div>'); // 增加loading效果和文字
+
+
+        // 获取多选下拉框的值
+        var dict = {{ mselect_dict|safe }};
+        
+        for (key in dict) {
+            var form_name = dict[key]['select'] + "_select";
+            jquery_selector_id = "[id='" + form_name + "']";//因为我们的部分多选框id有空格，要用这种写法
+            form_data[form_name] = $(jquery_selector_id).val();
+        }
+
+        $.ajax({
+            // 请求的url
+            url: '{% url 'visual:query' %}',
+            // 请求的type
+            type: 'GET',
+            // 发送的数据
+            data: form_data,
+            // 回调函数，其中ret是返回的JSON，可以以字典的方式调用
+            success: function (ret) {     //成功执行
+            // 更新单位标签
+                $("#label_size_unit").html("最新"+form_data['PERIOD_select']+ " "+form_data['UNIT_select']);
+                // 把查询结果输出到网页上预留id的DOM元素中
+                $("#df_mean").html(ret["df_mean"].toLocaleString());
+                $("#df_std").html(ret["df_std"].toLocaleString());
+                $("#df_median").html(ret["df_median"].toLocaleString());
+                $("#result_table").html(ret['ptable']);
+            },
+            error: function () {            //失败
+                console.log('失败')
+            }
+        });
+    })
+</script>
 
 <!-- 因为用到Semantic UI的Search Dropdown控件，必须有下面语句初始化 -->
 <script>
