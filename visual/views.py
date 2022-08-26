@@ -132,10 +132,10 @@ def query(request):
     df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
 
     form_dict = dict(six.iterlists(request.GET))
-
+    print(request.GET)
     print(form_dict)
 
-    dimension_selected = form_dict['DIMENSION_select'][0]
+    dimension_selected = form_dict['df_mean'][0]
     #  如果字段名有空格为了SQL语句在预设字典中加了中括号的，这里要去除
     if dimension_selected[0] == '[':
 
@@ -147,10 +147,10 @@ def query(request):
     kpi = get_kpi(df, column)
 
     context = {
-        "market_size": kpi["market_size"],
-        "market_gr": kpi["market_gr"],
-        "market_cagr": kpi["market_cagr"],
-        'ptable': df.to_html()
+        "df_mean": kpi["df_mean"],
+        "df_std": kpi["df_std"],
+        "df_median": kpi["df_median"],
+        'data': df.to_html()
     }
 
     return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
@@ -159,7 +159,9 @@ def query(request):
 def index(request, source_path=sourth_path, target_path=target_path, file_name=file_name, file_name_save=file_name_save):
  
     mselect_dict = {}
-
+    form_dict = dict(six.iterlists(request.GET))
+    print(request.GET)
+    print(form_dict)
     # df = pd.read_excel('C:/Users/sas053/Desktop/jmp_feature_importance.xlsx') #将sql语句结果读取至Pandas Dataframe
     df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
 
