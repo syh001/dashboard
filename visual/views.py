@@ -59,7 +59,7 @@ def read_data(source_path, target_path, file_name, file_name_save):
 
     return df
 
-def get_kpi(df, column='ph1_unbalance_hde', axis = 0):
+def get_kpi(df, column, axis = 0):
 
     df = df.loc[:, [column]]
 
@@ -143,12 +143,12 @@ def query(request, source_path=sourth_path, target_path=target_path, file_name=f
     # print('\nget some elements:\n', form_dict['Feature1'][0])
 
     # df = pd.read_excel('C:/Users/sas053/Desktop/jmp_feature_importance.xlsx') #将sql语句结果读取至Pandas Dataframe
-    df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
+    df = pd.read_csv('./Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
 
     df = read_data(source_path, target_path, file_name, file_name_save)
     df = df.iloc[0:30]
 
-    kpi = get_kpi(df)
+    # kpi = get_kpi(df)
  
     if form_dict:
         column = form_dict['Feature1'][0]
