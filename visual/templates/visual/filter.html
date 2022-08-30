@@ -4,19 +4,13 @@
             <!-- 在Django所有的 POST 表单元素时，需要加上下方的csrf_token tag，主要是安全方面的机制，本例后续使用AJAX方法，这里的POST class和token都不生效 -->
             {% csrf_token %}
             <h3 class="ui header" id="analysis">分析维度</h3>
-
             <div class="field">
+                <div class="fields"></div>
                 <div class="fields">
-                    
-                </div>
-
-                <div class="fields">
-
-                    <div class="eight wide field">
+                    <div class="fifteen wide field">
                         <select name="Feature1" id="Feature1" class="ui fluid search dropdown">
-
                             {% for key, value in mselect_dict.items %}
-                                {% if value.select == '' %}
+                                {% if value.select == 'hddsn' %}
                                     <option value="{{ value.select }}" selected>{{ key }}</option>
                                 {% else %}
                                     <option value="{{ value.select }}">{{ key }}</option>
@@ -24,12 +18,16 @@
                             {% endfor %}
                         </select>
                     </div>
-
-                    <div class="eight wide field">
+                </div>
+            </div>
+            
+            <div class="field">
+                <div class="fields"></div>
+                <div class="fields">
+                    <div class="fifteen wide field">
                         <select name="Feature2" id="Feature2" class="ui fluid search dropdown">
-
                             {% for key, value in mselect_dict.items %}
-                                {% if value.select == '' %}
+                                {% if value.select == 'hddsn' %}
                                     <option value="{{ value.select }}" selected>{{ key }}</option>
                                 {% else %}
                                     <option value="{{ value.select }}">{{ key }}</option>
@@ -41,29 +39,39 @@
             </div>
 
             <h3 class="ui header" id="analysis">辅助维度</h3>
-
             <div class="field">
-
+                <div class="fields"></div>
                 <div class="fields">
-                    
-                </div>
-
-                <div class="fields">
-
-                    <select name="Feature_opt" id="Feature_opt" class="ui fluid search dropdown">
-
-                        {% for key, value in mselect_dict.items %}
-                            {% if value.select == '' %}
-                                <option value="{{ value.select }}" selected>{{ key }}</option>
-                            {% else %}
-                                <option value="{{ value.select }}">{{ key }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+                    <div class="fifteen wide field">
+                        <select name="Feature_opt" id="Feature_opt" class="ui fluid search dropdown">
+                            {% for key, value in mselect_dict.items %}
+                                {% if value.select == 'Group' %}
+                                    <option value="{{ value.select }}" selected>{{ key }}</option>
+                                {% else %}
+                                    <option value="{{ value.select }}">{{ key }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
             </div>
 
-<!-- 
+            <h3 class="ui header" id="analysis">数据筛选</h3>
+            <div class="field"><div class="fields"></div>
+                <div class="fields">
+                    <div class="fifteen wide field">
+                    <select name="Feature_opt" id="Feature_opt" class="ui fluid multiple search dropdown">
+                        <!-- 默认hidden显示为Feature Selection -->
+                        <option value="">Feature Selection</option>
+                        {% for key, value in mselect_dict.items %}
+                                <!-- <option value="{{ value.select }}" selected>{{ key }}</option> -->
+                                <option value="{{ value.select }}">{{ key }}</option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </div>
+            </div>
+
             <h3 class="ui header" id="data_filter">数据筛选</h3>
             <div class="ui fluid multiple search selection dropdown">
                 <input type="hidden" name="featurename">
@@ -74,7 +82,9 @@
                     <div class="item">{{key}}</div>
                     {% endfor %}
                 </div>
-            </div> -->
+            </div>
+
+            
             <div class="ui buttons">
                 <input class="ui blue button" type='button' id='AJAX_get' value="选择"/>
             </div>
