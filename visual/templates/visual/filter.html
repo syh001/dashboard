@@ -10,7 +10,7 @@
                     <div class="fifteen wide field">
                         <select name="Feature1" id="Feature1" class="ui fluid search dropdown">
                             {% for key, value in mselect_dict.items %}
-                                {% if value.select == 'hddsn' %}
+                                {% if value.select == 'Group' %}
                                     <option value="{{ value.select }}" selected>{{ key }}</option>
                                 {% else %}
                                     <option value="{{ value.select }}">{{ key }}</option>
@@ -44,25 +44,24 @@
                 <div class="fields">
                     <div class="fifteen wide field">
                         <select name="Feature_opt" id="Feature_opt" class="ui fluid search dropdown">
+                            <!-- 默认hidden显示为Feature Selection -->
+                            <option value="">Feature Selection</option>
                             {% for key, value in mselect_dict.items %}
-                                {% if value.select == 'Group' %}
-                                    <option value="{{ value.select }}" selected>{{ key }}</option>
-                                {% else %}
-                                    <option value="{{ value.select }}">{{ key }}</option>
-                                {% endif %}
+                                <!-- <option value="{{ value.select }}" selected>{{ key }}</option> -->
+                                <option value="{{ value.select }}">{{ key }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
             </div>
 
-            <h3 class="ui header" id="analysis">数据筛选</h3>
+            <h3 class="ui header" id="analysis">数据文件选择</h3>
             <div class="field"><div class="fields"></div>
                 <div class="fields">
                     <div class="fifteen wide field">
                     <select name="Feature_opt" id="Feature_opt" class="ui fluid multiple search dropdown">
                         <!-- 默认hidden显示为Feature Selection -->
-                        <option value="">Feature Selection</option>
+                        <option value="">File Selection</option>
                         {% for key, value in mselect_dict.items %}
                                 <!-- <option value="{{ value.select }}" selected>{{ key }}</option> -->
                                 <option value="{{ value.select }}">{{ key }}</option>
@@ -72,7 +71,7 @@
                 </div>
             </div>
 
-            <h3 class="ui header" id="data_filter">数据筛选</h3>
+            <!-- <h3 class="ui header" id="data_filter">数据筛选</h3>
             <div class="ui fluid multiple search selection dropdown">
                 <input type="hidden" name="featurename">
                 <i class="dropdown icon"></i>
@@ -82,15 +81,18 @@
                     <div class="item">{{key}}</div>
                     {% endfor %}
                 </div>
+            </div> -->
+
+            <div class="ui buttons">
+                <input class="ui blue button" type='button' id='select_feature' value="维度选择"/>
             </div>
 
-            
             <div class="ui buttons">
-                <input class="ui blue button" type='button' id='AJAX_get' value="选择"/>
+                <input class="ui blue button" type='button' id='select_data_file' value="数据文件选择"/>
             </div>
 
             <script type="text/javascript">
-                $("#AJAX_get").click(function (event) {
+                $("#select_feature").click(function (event) {
                     event.preventDefault(); // 防止表单默认的提交
                     // 获取单选下拉框的值
                     alert('所选维度为: ' + $("#Feature1").val() + ' 和 ' + $("#Feature2").val() + 
