@@ -3,17 +3,22 @@
 
 <!-- 数据处理时的loading遮罩 -->
 <div class="ui active dimmer" id="dimmer">
-    <div class="ui text" style="color: #FFFFFF">请使用左侧筛选框选择两个维度生成图像(分析维度)<br><br>选择若干个维度在图中填充辅助信息(辅助维度)</div>
+    <div class="ui text" style="color: #FFFFFF">
+        请使用左侧筛选框选择两个维度生成图像(分析维度)
+        <br><br>
+        选择若干个维度在图中填充辅助信息(辅助维度)
+    </div>
 </div>
 
 <!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
 
 <div class="ui pointing secondary menu">
-    <a class="item active" data-tab="total"><i class="circle icon"></i>Summary</a>
-    <a class="item" data-tab="competition"><i class="circle icon"></i>Analysis</a>
+    <a class="item" data-tab="Plot"><i class="circle icon"></i>Plot</a>
+    <a class="item active" data-tab="Summary"><i class="circle icon"></i>Summary</a>
+    <a class="item" data-tab="Analysis"><i class="circle icon"></i>Analysis</a>
 </div>
 
-<div class="ui tab segment active" data-tab="total">
+<div class="ui tab segment active" data-tab="Summary">
 
     <h3 class="ui header">
         <div class="content">
@@ -23,6 +28,8 @@
     </h3>
 
     <div class="ui divider"></div>
+
+    <div class="sub header">Feature 1</div>
 
     <!-- Semantic UI的statistic类能呈现“醒目大数字”的效果 -->
     <div class="ui small three statistics">
@@ -56,10 +63,49 @@
 
     </div>
 
+    <div class="ui divider"></div>
+
+
+    <div class="sub header">Feature 2</div>
+
+    <!-- Semantic UI的statistic类能呈现“醒目大数字”的效果 -->
+    <div class="ui small three statistics">
+
+        <div class="statistic">
+            <div class="value" id="df_mean1">
+                {{ df_mean }}
+            </div>
+            <div class="label" id="df_mean_print">
+                df_mean
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_std1">
+                {{ df_std }}
+            </div>
+            <div class="label" id = 'df_std_print'>
+                df_std
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_median1">
+                {{ df_median }}
+            </div>
+            <div class="label" id="df_median_print">
+                df_median
+            </div>
+        </div>
+
+    </div>
+    
 </div>
 
+    
 
-<div class="ui tab segment" data-tab="competition">
+
+<div class="ui tab segment" data-tab="Analysis">
 
     <h3 class="ui header">
         <div class="content">
