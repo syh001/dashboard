@@ -24,6 +24,9 @@ target_path = 'C:/Users/1000297658/Desktop/dataset/'
 file_name = 'Return_yeah.csv'
 file_name_save = 'Return_yeah.csv'
 
+# global DF
+DF = pd.read_csv('./Return_yeah.csv') # 读取至Pandas Datafram
+
 # 该字典key为前端准备显示的所有多选字段名, value为数据库对应的字段名
 D_MULTI_SELECT = {
     'Feature 1 | 特征 1': 'feature_1',
@@ -125,8 +128,15 @@ def search(request, column, kw, df):
         }
     return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
 
+def choose_file(request):
 
-def query(request, source_path=sourth_path, target_path=target_path, file_name=file_name, file_name_save=file_name_save):
+    file_list_dict = dict(six.iterlists(request.GET))
+    file_list = os.path()
+
+    return file_list
+
+
+def query(request, df = DF):
     """
     query方法要实现以下后续功能:
 
@@ -137,15 +147,13 @@ def query(request, source_path=sourth_path, target_path=target_path, file_name=f
     """
     form_dict = dict(six.iterlists(request.GET))
 
-    print('request.GET:\n', request.GET)
-    print('obtained dictionary:\n', form_dict)
+    print('\nrequest.GET:\n', request.GET, '\n')
+    print('*'*50, '\nobtained dictionary:\n', form_dict, '\n')
+    print('*'*50)
 
     # print('\nget some elements:\n', form_dict['Feature1'][0])
+    # df = pd.read_csv('./Crush_yeah.csv') #将sql语句结果读取至Pandas Dataframe
 
-    # df = pd.read_excel('C:/Users/sas053/Desktop/jmp_feature_importance.xlsx') #将sql语句结果读取至Pandas Dataframe
-    df = pd.read_csv('./Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
-
-    df = read_data(source_path, target_path, file_name, file_name_save)
     df = df.iloc[0:30]
 
     # kpi = get_kpi(df)
@@ -164,19 +172,19 @@ def query(request, source_path=sourth_path, target_path=target_path, file_name=f
         'data': df.to_html(),
     }
     
-    return HttpResponse(json.dumps(context, ensure_ascii=True), content_type="application/json charset=utf-8") # 返回结果必须是json格式
+    return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
 
-
-def index(request, source_path=sourth_path, target_path=target_path, file_name=file_name, file_name_save=file_name_save):
+def index(request, df = DF):
  
     mselect_dict = {}
 
     form_dict = dict(six.iterlists(request.GET))
-    print('request.GET:\n', request.GET)
-    print('obtained dictionary:\n', form_dict)
-
-    df = pd.read_csv('C:/Users/1000297658/Desktop/dataset/Return_yeah.csv') #将sql语句结果读取至Pandas Dataframe
-    df = read_data(source_path, target_path, file_name, file_name_save)
+    print('\nrequest.GET:\n', request.GET, '\n')
+    print('*'*50, '\nobtained dictionary:\n', form_dict, '\n')
+    print('*'*50)
+    # global df
+    # df = pd.read_csv('./Crush_yeah.csv') #将sql语句结果读取至Pandas Dataframe
+    # df = read_data(source_path, target_path, file_name, file_name_save)
     df = df.iloc[0:50]
 
     dct = columns2dictionary(df)

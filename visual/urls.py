@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
+import pandas as pd
 
-app_name = 'visual'  # 这句是必须的，和之后所有的URL语句有关
+
+# 这句是必须的，和之后所有的URL语句有关
+app_name = 'visual'
+
 urlpatterns = [
     path('index', views.index, name = 'index'),
     path('query', views.query, name = 'query')

@@ -90,7 +90,6 @@
                         "Feature2": $("#Feature2").val(),
                         "Feature_opt": $("#Feature_opt").val(),
                     };
-                    alert("值为: " + $("#Feature1").val());
                     // 
                     var dimmer = $("#dimmer");
                     dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
@@ -99,10 +98,8 @@
             
             
                     // 获取多选下拉框的值
-                    // var dict = mselect_dict|safe;
+                    // var dict = mselect_dict|safe; ???
                     var dict = {"Feature_opt": $("#Feature_opt").val(),};
-                    alert("1212121212121: " + $("#Feature_opt").val());
-                    
                     
                     // for (key in dict) {
                     //     var form_name = dict[key]['select'];
