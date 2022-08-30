@@ -128,8 +128,14 @@ def search(request, column, kw, df):
         }
     return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
 
-def choose_file(request):
 
+def choose_file(request):
+    """
+    交互式(多)文件选择
+    后端遍历路径下的文件名 并传至前端候选
+    在前端点击所选的文件通过request返回后端一个list供read_data()读取
+    
+    """
     file_list_dict = dict(six.iterlists(request.GET))
     file_list = os.path()
 
