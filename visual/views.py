@@ -180,7 +180,7 @@ def query(request, df = DF):
     
     return HttpResponse(json.dumps(context, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
 
-def index(request, df = DF):
+def index(request):
  
     mselect_dict = {}
 
@@ -191,7 +191,7 @@ def index(request, df = DF):
     # global df
     # df = pd.read_csv('./Crush_yeah.csv') #将sql语句结果读取至Pandas Dataframe
     # df = read_data(source_path, target_path, file_name, file_name_save)
-    df = df.iloc[0:50]
+    df = DF.iloc[0:50]
 
     dct = columns2dictionary(df)
 
