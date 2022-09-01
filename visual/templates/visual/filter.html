@@ -98,11 +98,12 @@
                     alert('所选维度为: ' + $("#Feature1").val() + ' 和 ' + $("#Feature2").val() + 
                     '\n' + '所选辅助维度为: ' + $("#Feature_opt").val());
                     var form_data = {
-                        "Feature1": $("#Feature1").val(),
-                        "Feature2": $("#Feature2").val(),
-                        "Feature_opt": $("#Feature_opt").val(),
+                        'Feature1': $("#Feature1").val(),
+                        'Feature2': $("#Feature2").val(),
+                        'Feature_opt': $("#Feature_opt").val(),
                     };
                     // 
+                    alert(form_data['Feature_opt']);
                     var dimmer = $("#dimmer");
                     dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
                     dimmer.children('div').remove(); // 删除初始化文字
@@ -121,12 +122,13 @@
             
                     $.ajax({
                         // 请求的url
-                        url: '{% url 'visual:query' %}',
-                        // url: 'http://127.0.0.1:8000/visual/query',
+                        // url: '{% url 'visual:query' %}',
+                        url: 'http://127.0.0.1:8000/visual/query',
                         // 请求的type
                         type: 'GET',
                         // 发送的数据
                         data: form_data,
+                        
                         // 回调函数，其中ret是返回的JSON，可以以字典的方式调用
                         success: function (ret) {     //成功执行
                         // 更新单位标签
@@ -149,6 +151,18 @@
                     });
                 })
             </script>
+
+            <script type="text/javascript">
+                $("#AJAX_get").click(function () {
+                    // Pyecharts图表初始化
+                    var chart = echarts.init(document.getElementById('figure_space'), 'white', {renderer: 'canvas'});
+                    chart.showLoading({
+                    text : '正在加载数据' //增加加载提示
+                });
+            })
+            </script>
+
+
         </form>
     </div>
 </div>

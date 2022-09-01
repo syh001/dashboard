@@ -1,14 +1,6 @@
 {% extends "visual/analysis.html" %}
 {% block display %}
 
-<!-- 数据处理时的loading遮罩 -->
-<div class="ui active dimmer" id="dimmer">
-    <div class="ui text" style="color: #FFFFFF">
-        请使用左侧筛选框选择两个维度生成图像(分析维度)
-        <br><br>
-        选择若干个维度在图中填充辅助信息(辅助维度)
-    </div>
-</div>
 
 <!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
 
@@ -19,6 +11,15 @@
 </div>
 
 <div class="ui tab segment active" data-tab="Summary">
+
+    <!-- 数据处理时的loading遮罩 -->
+    <div class="ui active dimmer" id="dimmer">
+    <div class="ui text" style="color: #faf5f5">
+        请使用左侧筛选框选择两个维度生成图像(分析维度)
+        <br><br>
+        选择若干个维度在图中填充辅助信息(辅助维度)
+    </div>
+    </div>
 
     <h3 class="ui header">
         <div class="content">
@@ -102,9 +103,6 @@
     
 </div>
 
-    
-
-
 <div class="ui tab segment" data-tab="Analysis">
 
     <h3 class="ui header">
@@ -122,6 +120,23 @@
     </div>
 
 </div>
+
+
+<div class="ui tab segment" data-tab="Plot">
+    <h3 class="ui header">
+        <div class="content">
+            Figure
+            <div class="sub header">柱状折线复合图</div>
+        </div>
+    </h3>
+    <div class="ui divider"></div>
+    <div class="ui container">
+        <div id="figure_space" style="width:1000px; height:600px;"></div>
+    </div>
+</div>
+
+
+
 
 <!-- 下方js为保证Semantic UI tab类工作 -->
 <script>

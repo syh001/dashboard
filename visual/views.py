@@ -6,6 +6,8 @@ import numpy as np
 import os
 from win32com.client import Dispatch
 import json
+from .charts import *
+
 
 try:
     import six  # for modern Django
@@ -26,6 +28,19 @@ file_name_save = 'Return_yeah.csv'
 
 # global DF
 DF = pd.read_csv('./Return_yeah.csv') # 读取至Pandas Datafram
+
+D_TRANS = {
+            'MAT': '滚动年',
+            'QTR': '季度',
+            'Value': '金额',
+            'Volume': '盒数',
+            'Volume (Counting Unit)': '最小制剂单位数',
+            '滚动年': 'MAT',
+            '季度': 'QTR',
+            '金额': 'Value',
+            '盒数': 'Volume',
+            '最小制剂单位数': 'Volume (Counting Unit)'
+           }
 
 # 该字典key为前端准备显示的所有多选字段名, value为数据库对应的字段名
 D_MULTI_SELECT = {
@@ -61,6 +76,29 @@ def read_data(source_path, target_path, file_name, file_name_save):
         df = pd.read_csv(source_file)
 
     return df
+
+def prepare_chart(df,  # 输入经过pivoted方法透视过的df，不是原始df
+                  chart_type,  # 图表类型字符串，人为设置，根据图表类型不同做不同的Pandas数据处理，及生成不同的Pyechart对象
+                  form_dict,  # 前端表单字典，用来获得一些变量作为图表的标签如单位
+                  ):
+    label = D_TRANS[form_dict['PERIOD_select'][0]] + D_TRANS[form_dict['UNIT_select'][0]]
+
+    if chart_type == 'figure_space':
+        df_abs = df.sum(axis=1)  # Pandas列汇总，返回一个N行1列的series，每行是一个date的市场综合
+        df_abs.index = df_abs.index.strftime("%Y-%m")  # 行索引日期数据变成2020-06的形式
+        df_abs = df_abs.to_frame()  # series转换成df
+        df_abs.columns = [label]  # 用一些设置变量为系列命名，准备作为图表标签
+        df_gr = df_abs.pct_change(periods=4)  # 获取同比增长率
+        df_gr.dropna(how='all', inplace=True)  # 删除没有同比增长率的行，也就是时间序列数据的最前面几行，他们没有同比
+        df_gr.replace([np.inf, -np.inf, np.nan], '-', inplace=True)  # 所有分母为0或其他情况导致的inf和nan都转换为'-'
+        chart = echarts_stackbar(df=df_abs,
+                                 df_gr=df_gr
+                                 )  # 调用stackbar方法生成Pyecharts图表对象
+        return chart.dump_options()  # 用json格式返回Pyecharts图表对象的全局设置
+    else:
+        return None
+
+
 
 def get_kpi(df, column, axis = 0):
 
@@ -169,7 +207,6 @@ def query(request, df = DF):
         kpi = get_kpi(df, column)
         df = df.loc[:, [column]]
 
-    print(df)
     
     context = {
         "df_mean": kpi["df_mean"],
