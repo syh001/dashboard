@@ -82,14 +82,19 @@
                     {% endfor %}
                 </div>
             </div> -->
-
-            <div class="ui buttons">
-                <input class="ui blue button" type='button' id='select_feature' value="维度选择"/>
+            <div class="ui blue animated button" tabindex="0" id='select_feature'>
+                <div class="visible content">维度选择</div>
+                <div class="hidden content">确认</div>
             </div>
 
-            <div class="ui buttons">
+            <div class="ui blue animated button" tabindex="0" id='select_data_file'>
+                <div class="visible content">数据文件选择</div>
+                <div class="hidden content">确认</div>
+            </div>
+
+            <!-- <div class="ui buttons">
                 <input class="ui blue button" type='button' id='select_data_file' value="数据文件选择"/>
-            </div>
+            </div> -->
 
             <script type="text/javascript">
                 $("#select_feature").click(function (event) {
