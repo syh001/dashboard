@@ -8,5 +8,6 @@ app_name = 'visual'
 
 urlpatterns = [
     path('index', views.index, name = 'index'),
-    path('query', views.query, name = 'query')
+    path('blog', views.blog, name = 'blog'),
+    path('query', views.query, name = 'query'),
 ]

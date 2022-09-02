@@ -222,7 +222,7 @@ def index(request):
     mselect_dict = {}
 
     form_dict = dict(six.iterlists(request.GET))
-    print('\nrequest.GET:\n', request.GET, '\n')
+    print('2222222222222222222222222222222222222222222222222222222222')
     print('*'*50, '\nobtained dictionary:\n', form_dict, '\n')
     print('*'*50)
     # global df
@@ -244,3 +244,30 @@ def index(request):
     
     return render(request, 'visual/display.html', context)
     # return HttpResponse(df.to_html(max_cols=10,show_dimensions=True)) #渲染，这里暂时渲染为最简单的HttpResponse，以后可以扩展
+
+def blog(request):
+ 
+    mselect_dict = {}
+
+    form_dict = dict(six.iterlists(request.GET))
+    print('111111111111111111111111111111111111111111111111111111111111')
+    print('*'*50, '\nobtained dictionary:\n', form_dict, '\n')
+    print('*'*50)
+    # global df
+    # df = pd.read_csv('./Crush_yeah.csv') #将sql语句结果读取至Pandas Dataframe
+    # df = read_data(source_path, target_path, file_name, file_name_save)
+    df = DF.iloc[0:50]
+
+    dct = columns2dictionary(df)
+
+    # D_MULTI_SELECT
+    for key, value in dct.items():
+        mselect_dict[key] = {}
+        mselect_dict[key]['select'] = value
+        mselect_dict[key]['options'] = get_distinct_list(df, value) # 以后可以后端通过列表为每个多选控件传递备选项
+
+    context = {
+        'mselect_dict': mselect_dict,
+    }
+    
+    return render(request, 'visual/blog_main_display.html', context)
