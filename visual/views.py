@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
 import os
-from win32com.client import Dispatch
+# from win32com.client import Dispatch
 import json
 from .charts import *
-
+import matplotlib.pyplot as plt
 
 try:
     import six  # for modern Django
@@ -63,15 +63,15 @@ def read_data(source_path, target_path, file_name, file_name_save):
 
     if source_file.endswith('.sas7bdat'):
         df = pd.read_sas(source_file)
-    elif source_file.endswith('.jmp'):
-        jmp = Dispatch("JMP.Application")
-        doc = jmp.OpenDocument(source_file)
-        # temporarily add csv file
-        doc.SaveAs(target_file)
-        df = pd.read_csv(target_file)
-        # Delete the extraly generated csv file 
-        # to ensure that the data warehouse has not changed
-        os.remove(target_path + file_name_save)
+    # elif source_file.endswith('.jmp'):
+    #     jmp = Dispatch("JMP.Application")
+    #     doc = jmp.OpenDocument(source_file)
+    #     # temporarily add csv file
+    #     doc.SaveAs(target_file)
+    #     df = pd.read_csv(target_file)
+    #     # Delete the extraly generated csv file 
+    #     # to ensure that the data warehouse has not changed
+    #     os.remove(target_path + file_name_save)
     else:
         df = pd.read_csv(source_file)
 
