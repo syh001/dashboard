@@ -15,8 +15,12 @@
         </div>
 
         <!-- 右边13/16为display页面, 预留block -->
-        <div class="thirteen wide column">
+        <div class="ten wide column">
             {% block display %}{% endblock display %}
+        </div>
+
+        <div class="three wide column">
+            {% include 'visual/filter.html' %}
         </div>
     </div>
 </div>
