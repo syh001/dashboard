@@ -108,7 +108,7 @@
                         'Feature_opt': $("#Feature_opt").val(),
                     };
                     // 
-                    alert(form_data['Feature_opt']);
+                    // alert(form_data['Feature_opt']);
                     var dimmer = $("#dimmer");
                     dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
                     dimmer.children('div').remove(); // 删除初始化文字
@@ -127,8 +127,8 @@
             
                     $.ajax({
                         // 请求的url
-                        // url: '{% url 'visual:query' %}',
-                        url: 'http://127.0.0.1:8000/visual/query',
+                        url: '{% url 'visual:query' %}',
+                        // url: 'http://127.0.0.1:8000/visual/query',
                         // 请求的type
                         type: 'GET',
                         // 发送的数据
@@ -140,7 +140,8 @@
                             // $("#label_size_unit").html("最新"+form_data['PERIOD_select']+ " "+form_data['UNIT_select']);
                             // 把查询结果输出到网页上预留id的DOM元素中
                             if (ret["df_mean"] == 'N/A'){
-                                alert('Warning! Selected feature is not numeric!');
+                                alert('Warning! Selected feature is not numeric!' +
+                                '\n' + '警告！所选维度为非数值型，无法计算mean等参数');
                             }
                             // 去除加载遮罩（去掉active）
                             dimmer.attr('class', 'ui dimmer');
