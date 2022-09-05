@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="5955e419-f106-401d-acfe-6f4e79b8df7e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visual/charts.py" beforeDir="false" afterPath="$PROJECT_DIR$/visual/charts.py" afterDir="false" />
@@ -9,6 +10,9 @@
       <change beforePath="$PROJECT_DIR$/visual/templates/visual/filter.html" beforeDir="false" afterPath="$PROJECT_DIR$/visual/templates/visual/filter.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visual/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/visual/views.py" afterDir="false" />
     </list>
+=======
+    <list default="true" id="5955e419-f106-401d-acfe-6f4e79b8df7e" name="Changes" comment="" />
+>>>>>>> d3005d0e550453cba89f871f0ad218e0e8a74c71
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,7 +22,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+<<<<<<< HEAD
         <option value="HTML File" />
+=======
+>>>>>>> d3005d0e550453cba89f871f0ad218e0e8a74c71
       </list>
     </option>
   </component>
@@ -35,6 +42,7 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
@@ -50,6 +58,17 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.test">
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Django",
+    "settings.editor.selected.configurable": "vcs.Git"
+  }
+}]]></component>
+  <component name="RunManager" selected="Python.local_test">
+>>>>>>> d3005d0e550453cba89f871f0ad218e0e8a74c71
     <configuration name="local_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Django" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -92,6 +111,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Django" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -167,6 +187,14 @@
         <item itemvalue="Python.test" />
         <item itemvalue="Python.x" />
         <item itemvalue="Python.views" />
+=======
+    <list>
+      <item itemvalue="Python.manage" />
+      <item itemvalue="Python.local_test" />
+    </list>
+    <recent_temporary>
+      <list>
+>>>>>>> d3005d0e550453cba89f871f0ad218e0e8a74c71
         <item itemvalue="Python.local_test" />
       </list>
     </recent_temporary>

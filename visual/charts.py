@@ -7,6 +7,10 @@ def echarts_stackbar(df,  # 传入数据df，应该是一个行索引为date的�
              datatype='ABS',  # 主Y轴形式是绝对值，增长率还是份额，用来确定一些标签格式，默认为绝对值
              line_name=None,
              ) -> Bar:
+
+
+
+
     axislabel_format = '{value}'  # 主Y轴默认格式
     max = df[df>0].sum(axis=1).max()  # 主Y轴默认最大值
     min = df[df<=0].sum(axis=1).min()  # 主Y轴默认最小值
@@ -107,3 +111,4 @@ def echarts_scatter(data, form_dict):
     )
     # scatter1.render('echarts-scatter.html')
     return scatter1
+

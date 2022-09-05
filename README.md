@@ -17,7 +17,11 @@ Currently used as TODO list & development log for WD dashboard project.
 ### 0.2.3 基础数据(预)处理函数
 - ref Mia's summary of DataProcessing.md list
 ### (0.2.4) Brainstorm for *other possible* data pre-process/cleaning functions
+<<<<<<< HEAD
 - DA teammates, Baosu, Haibo等同事提意见和建议
+=======
+- DA teammates & 其他组同事提意见和建议
+>>>>>>> d3005d0e550453cba89f871f0ad218e0e8a74c71
 
 # 0.3 数据可视化 （在正确的位置出现，数据显示正确）
 ### 0.3.1 Django 前端位置预留设计，打印空图
