@@ -207,6 +207,7 @@ def query(request, df = DF):
         kpi = get_kpi(df, column)
         df = df.loc[:, [column]]
 
+    print(kpi)
     
     context = {
         "df_mean": kpi["df_mean"],
