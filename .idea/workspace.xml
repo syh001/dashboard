@@ -3,6 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="5955e419-f106-401d-acfe-6f4e79b8df7e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visual/charts.py" beforeDir="false" afterPath="$PROJECT_DIR$/visual/charts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visual/templates/visual/analysis.html" beforeDir="false" afterPath="$PROJECT_DIR$/visual/templates/visual/analysis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visual/templates/visual/display.html" beforeDir="false" afterPath="$PROJECT_DIR$/visual/templates/visual/display.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visual/templates/visual/filter.html" beforeDir="false" afterPath="$PROJECT_DIR$/visual/templates/visual/filter.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visual/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/visual/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,15 +35,15 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "D:/Django",
-    "settings.editor.selected.configurable": "Errors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Django&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Django" />
@@ -152,10 +157,10 @@
     </configuration>
     <list>
       <item itemvalue="Python.manage" />
+      <item itemvalue="Python.local_test" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.views" />
       <item itemvalue="Python.x" />
-      <item itemvalue="Python.local_test" />
     </list>
     <recent_temporary>
       <list>

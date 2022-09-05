@@ -110,6 +110,7 @@ def prepare_chart(data, #全部dataframe
         return None
 
 def query(request, data=DF):
+    print('============到达query=========')
     form_dict = dict(six.iterlists(request.GET))
     # print('\nrequest.GET:\n', request.GET, '\n')
     # print('*' * 50, '\nobtained dictionary:\n', form_dict, '\n')
@@ -127,10 +128,9 @@ def query(request, data=DF):
     box_df = pd.DataFrame(box)
     # Pyecharts交互图表
     # bar_total_trend = json.loads(prepare_chart(data, df, 'bar_total_trend', form_dict))
-    s_pic = echarts_scatter(data, form_dict)
-    scatter_pic = s_pic.read()
-    scatter_pic = json.loads(scatter_pic)
-
+    scatter_pic = echarts_scatter(data, form_dict)
+    scatter_pic = json.loads(scatter_pic.dump_options())
+    print('=============scatter pic is:=============', '\n', scatter_pic, '\n')
     context = {
         'scatter_pic': scatter_pic,
         # 'bar_total_trend': bar_total_trend,

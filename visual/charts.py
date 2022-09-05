@@ -84,7 +84,6 @@ def echarts_stackbar(df,  # 传入数据df，应该是一个行索引为date的�
             )
     else:
         stackbar = (Bar())
-
     if df_gr is not None:
         return stackbar.overlap(line) # 如果有次坐标轴最后要用overlap方法组合
     else:
@@ -107,5 +106,4 @@ def echarts_scatter(data, form_dict):
         .set_global_opts(title_opts=opts.TitleOpts(title='例1 scatter自定义数据基本示例'))
     )
     # scatter1.render('echarts-scatter.html')
-
     return scatter1
