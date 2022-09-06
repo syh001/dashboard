@@ -188,7 +188,7 @@ def query(request, data=DF):
         kpi = get_kpi(df, column)
         df = df.loc[:, [column]]
     box_df = pd.DataFrame(box)
-    print('================kpi', kpi)
+    print('================aaaaaaaaaaaaa', kpi)
     flag=0
     bar_total_trend = ""
     if kpi["df_mean"]!='N/A':
