@@ -7,8 +7,8 @@
 <div class="ui hidden divider"></div>
 
 <!-- 写入 base.html 中定义的 body content -->
-
 {% block body %}
+
 <!-- 因为semantic ui的特性需要在body部分写个pusher避免内容被顶部导航栏遮挡 -->
 <div id="HomePage" class="pusher" style="padding-top:50px" data-tab="HomePage">
     {{ data }}
@@ -22,6 +22,8 @@
         <div class="thirteen wide column">
             {% block display %}{% endblock display %}
         </div>
+
+
     </div>
 </div></div>
 

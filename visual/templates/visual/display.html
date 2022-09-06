@@ -1,0 +1,159 @@
+{% extends "visual/analysis.html" %}
+{% block display %}
+{% load tags %}
+<!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
+
+<div class="ui pointing secondary menu">
+    <a class="item active" data-tab="Summary"><i class="circle icon"></i>Summary</a>
+    <a class="item" data-tab="Feature"><i class="trophy icon"></i>Feature</a>
+    <a class="item" data-tab="show_all"><i class="circle icon"></i>show_all</a>
+    <a class="item" data-tab="plot"><i class="circle icon"></i>plot</a>
+</div>
+
+<div class="ui tab segment active" data-tab="Summary">
+
+    <!-- 数据处理时的loading遮罩 -->
+    <div class="ui active dimmer" id="dimmer">
+    <div class="ui text" style="color: #ffffff">
+        请使用左侧筛选框选择两个维度生成图像(分析维度)
+        <br><br>
+        选择若干个维度在图中填充辅助信息(辅助维度)
+    </div>
+    </div>
+
+    <h3 class="ui header">
+        <div class="content">
+            KPIs
+            <div class="sub header">KPIs, containing mean, std, median of input feature</div>
+        </div>
+    </h3>
+
+    <div class="ui divider"></div>
+
+    <div class="sub header">Feature 1</div>
+
+    <!-- Semantic UI的statistic类能呈现“醒目大数字”的效果 -->
+    <div class="ui small three statistics">
+
+        <div class="statistic">
+            <div class="value" id="df_mean">
+                {{ df_mean }}
+            </div>
+            <div class="label" id="df_mean_print_1">
+                df_mean
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_std">
+                {{ df_std }}
+            </div>
+            <div class="label" id = 'df_std_print_1'>
+                df_std
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_median">
+                {{ df_median }}
+            </div>
+            <div class="label" id="df_median_print_1">
+                df_median
+            </div>
+        </div>
+
+    </div>
+
+    <div class="ui divider"></div>
+
+
+    <div class="sub header">Feature 2</div>
+
+    <!-- Semantic UI的statistic类能呈现“醒目大数字”的效果 -->
+    <div class="ui small three statistics">
+
+        <div class="statistic">
+            <div class="value" id="df_mean1">
+                {{ df_mean }}
+            </div>
+            <div class="label" id="df_mean_print_2">
+                df_mean
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_std1">
+                {{ df_std }}
+            </div>
+            <div class="label" id = 'df_std_print_2'>
+                df_std
+            </div>
+        </div>
+
+        <div class="statistic">
+            <div class="value" id="df_median1">
+                {{ df_median }}
+            </div>
+            <div class="label" id="df_median_print_2">
+                df_median
+            </div>
+        </div>
+
+    </div>
+    
+</div>
+
+
+<div class="ui tab segment" data-tab="Feature">
+    <h3 class="ui header">
+        <div class="content">
+            Selected Feature (ALL)
+            <div class="sub header">所选特征</div>
+        </div>
+    </h3>
+    <div class="ui divider"></div>
+    <div class="ui container" id='data_' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+        <!-- Django渲染html代码时需要加入|safe，保证html不会被自动转义 -->
+        {{ data_|safe }}
+    </div>
+</div>
+
+<div class="ui tab segment" data-tab="show_all">
+    <h3 class="ui header">
+        <div class="content">
+            Raw Data
+            <div class="sub header">数据展示</div>
+        </div>
+    </h3>
+    <div class="ui divider"></div>
+    <div class="ui container" id='alldata' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+        {{ alldata|safe }}
+    </div>
+</div>
+
+
+
+
+<div class="ui tab segment" data-tab="plot">
+    <h3 class="ui header">
+        <div class="content">
+            Figure
+            <div class="sub header">柱状折线复合图</div>
+        </div>
+    </h3>
+    <div class="ui divider"></div>
+    <div class="ui container">
+
+        <div id="bar_total_trend" style="width:1000px; height:600px;"></div>
+<!--        <div id="scatter_pic" style="width:1000px; height:600px;"></div>-->
+<!--        <div id="figure_space" style="width:1000px; height:600px;"></div>-->
+    </div>
+</div>
+
+<!-- 下方js为保证Semantic UI tab类工作 -->
+<script>
+    $('.pointing.secondary.menu .item').tab();
+</script>
+
+
+{% endblock %}
