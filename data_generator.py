@@ -25,7 +25,7 @@ def append_data(df, threshold):
     print(temp_df.memory_usage().sum()/(1024**2), 'MB')
     # print(temp_df.reset_index(drop=True))
 
-    temp_df.to_csv('%s.csv' % threshold, index = False)
+    temp_df.to_csv('./%s.csv' % threshold, index = False)
 
     return None
 
