@@ -46,9 +46,9 @@ Currently used as TODO list & development log for WD dashboard project.
 -------------------------------------------------------------------------------
 ## 只选择一个维度
 
-## - 这个维度为数值型数据
-## - 这个维度为字符型数据/布尔型
-## - 这个维度为时间数据
+- 这个维度为数值型数据
+- 这个维度为字符型数据/布尔型
+- 这个维度为时间数据
 
 
 # 0.4 接口（数据选择，预处理，ML，可视化）
@@ -92,3 +92,7 @@ Currently used as TODO list & development log for WD dashboard project.
 ## 数据改动的自动化，选项？
 
 ## 时间敏感度
+
+
+
+## 图像无法加载，显示“加载中”或“无法加载”时，上一张图像要先close掉
