@@ -10,34 +10,51 @@ try:
     import six
 except ImportError:
     from django.utils import six
-import os
-from win32com.client import Dispatch
-from .charts import *
+import time
 
+root_path = './'
 sourth_path = 'C:/Users/sas053/Desktop/dataset'
 target_path = 'C:/Users/sas053/Desktop/dataset'
 file_name = 'test.csv'
 file_name_save = 'return_test.xlsx'
 
-DF = pd.read_csv('C:/Users/sas053/Desktop/test_date.csv')
+since = time.time()
+global DF
+DF = pd.read_csv('./1024.csv')
+print('it costs: ', time.time() - since, 's to load the file')
+print(DF.memory_usage().sum()/(1024**2), 'MB')
+since = time.time()
+df_col = DF.iloc[:,7]
+print('it costs: ', time.time() - since, 's to load the column')
 
 def read_data(source_path, target_path, file_name, file_name_save):
+
     source_file = source_path + file_name
     target_file = target_path + file_name_save
+
     if source_file.endswith('.sas7bdat'):
         df = pd.read_sas(source_file)
-    elif source_file.endswith('.jmp'):
-        jmp = Dispatch("JMP.Application")
-        doc = jmp.OpenDocument(source_file)
-        doc.SaveAs(target_file)
-        df = pd.read_csv(target_file)
-        os.remove(target_path + file_name_save)
+    # elif source_file.endswith('.jmp'):
+    #     jmp = Dispatch("JMP.Application")
+    #     doc = jmp.OpenDocument(source_file)
+    #     # temporarily add csv file
+    #     doc.SaveAs(target_file)
+    #     df = pd.read_csv(target_file)
+    #     # Delete the extraly generated csv file 
+    #     # to ensure that the data warehouse has not changed
+    #     os.remove(target_path + file_name_save)
     else:
         df = pd.read_csv(source_file)
+
     return df
 
-def get_kpi(df, column, axis=0):
+
+def get_kpi(df, column, axis = 0):
+
     df = df.loc[:, [column]]
+
+    print(df)
+    print(df.mean(axis))
     try:
         df_mean = df.mean(axis)[0]
         df_std = df.std(axis)[0]
@@ -72,9 +89,15 @@ def columns2dictionary(df):
     从DataFrame里读取生成, key即是value, 所见即所得
     """
     dictionary = {col: col for col in df.columns}
+
     return dictionary
 
 def get_distinct_list(df, column):
+    """
+    获取一个feature下的不同的值，通过unique()函数
+    改list返回可作为画图中的legend
+    """
+    # print(df[column].unique())
     l = df[column].unique()
     return l
 
