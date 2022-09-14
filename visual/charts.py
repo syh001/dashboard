@@ -2,6 +2,7 @@ from pyecharts.charts import Line, Bar, Scatter
 from pyecharts import options as opts
 from pyecharts.faker import Faker
 import numpy as np
+
 def echarts_mybar(df, x, y):
     df = df.iloc[:30, :]
     x_axis = np.array(df[x]).tolist()
@@ -75,7 +76,6 @@ def echarts_myscatter(df, x, y):
         #         splitline_opts=opts.SplitLineOpts(is_show=True),  # 显示分割线
         #     ),
         #     # 提示框配置项
-        #     # tooltip_opts=opts.TooltipOpts(is_show=False),  # 不显示提示框组件
             toolbox_opts=opts.ToolboxOpts()
         )
     )

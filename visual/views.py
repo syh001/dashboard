@@ -107,7 +107,6 @@ def choose_file(request):
     file_list = os.path()
     return file_list
 
-
 def showdata(request, df=DF):
     data = dict(six.iterlists(request.GET))
     con = {
