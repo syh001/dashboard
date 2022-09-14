@@ -28,8 +28,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="field">
                 <div class="fields"></div>
                 <div class="fields">
@@ -82,10 +80,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
             <div class="ui blue animated button" tabindex="0" id='select_data_file_'>
                 <div class="visible content">数据文件选择</div>
                 <div class="hidden content">确认</div>
@@ -116,10 +110,9 @@
         event.preventDefault();
         alert('所选维度为: ' + $("#Feature1").val() + ' 和 ' + $("#Feature2").val() +
                     '\n' + '所选辅助维度为: ' + $("#Feature_opt").val());
-        var chart = echarts.init(document.getElementById('bar_total_trend'), 'white', {renderer: 'canvas'});
-        chart.showLoading({
-          text : '正在加载数据'
-        });
+<!--        chart.showLoading({-->
+<!--          text : '正在加载数据'-->
+<!--        });-->
         var dimmer = $("#dimmer");
                     dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
                     dimmer.children('div').remove(); // 删除初始化文字
@@ -140,11 +133,6 @@
                     chart.showLoading({
                       text : '数据类型错误'
                     });
-                }
-                else{
-                    chart.clear();
-                    chart.setOption(ret['bar_total_trend']);
-                    chart.hideLoading();
                 }
                 // 去除加载遮罩（去掉active）
                 dimmer.attr('class', 'ui dimmer');
