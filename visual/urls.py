@@ -7,7 +7,9 @@ urlpatterns = [
     # path(r'^add_query', views.add_query)
     path(r'query', views.query, name="query"),
     path('blog', views.blog, name = 'blog'),
-    path(r'showdata', views.showdata, name="showdata"),]
+    path(r'showdata', views.showdata, name="showdata"),
+    path(r'plot', views.plot, name="plot"),
+]
 
 
 
