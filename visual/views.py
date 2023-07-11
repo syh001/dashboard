@@ -55,9 +55,6 @@ def read_data(source_path, target_path, file_name, file_name_save):
 def get_kpi(df, column, axis = 0):
 
     df = df.loc[:, [column]]
-
-    # print(df)
-    # print(df.mean(axis))
     try:
         df_mean = df.mean(axis)[0]
         df_std = df.std(axis)[0]
@@ -187,28 +184,19 @@ def query1(request, data=DF):
 
 def plot(request):
     type = list(dict(six.iterlists(request.GET)).keys())[0]
-    # item = dict(six.iterlists(request.GET)).keys()
     print('===============', type, '==================')
-
     if type == 'Combine':
         chart = echarts_barline(DF, x_feature, y_feature, box)
     elif type == 'Line':
         chart = echarts_myline(DF, x_feature, y_feature, box)
     elif type == 'Stack':
         chart = echarts_stackbar(DF, x_feature, y_feature, box)
-
     elif type == 'Plot':
-
         chart = echarts_two_test(query1_data, process_choose)
-
     chart = chart.dump_options()
-
-
     total_trend = json.loads(chart)
-    # print('total_trend', type(total_trend))
     context = {
         'total_trend': total_trend,
-
     }
     return HttpResponse(json.dumps(context, ensure_ascii=False),
                         content_type="application/json charset=utf-8")
@@ -259,48 +247,8 @@ def choose_path_file():
             print("Parent folder:", parent)
             print("Filename:", filename)
 
-def response_as_json(data):
-    json_str = json.dumps(data)
-    response = HttpResponse(
-        json_str,
-        content_type="application/json",
-    )
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
 
 
-def json_response(data, code=200):
-    data = {
-        "code": code,
-        "msg": "success",
-        "data": data,
-    }
-    return response_as_json(data)
 
-
-def json_error(error_string="error", code=500, **kwargs):
-    data = {
-        "code": code,
-        "msg": error_string,
-        "data": {}
-    }
-    data.update(kwargs)
-    return response_as_json(data)
-
-
-JsonResponse = json_response
-JsonError = json_error
-
-
-def bar_base() -> Bar:
-    c = (
-        Bar()
-        .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
-        .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
-        .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
-        .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-        .dump_options_with_quotes()
-    )
-    return c
 
 

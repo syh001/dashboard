@@ -737,9 +737,7 @@ def echarts_two_test(df, process_choose):
             max_=110,
             axisline_opts=opts.AxisLineOpts(
                 is_show=False,
-
             ),
-
         )
     )
     bar1.set_global_opts(
@@ -842,19 +840,6 @@ def echarts_two_test(df, process_choose):
     #         legend_opts=opts.LegendOpts(pos_top="48%"),
     #     )
     # )
-
-
-# 导入要使用的模块
-from pyecharts import options as opts
-from pyecharts.charts import Bar, Grid, Line, Liquid, Page, Pie
-from pyecharts.commons.utils import JsCode
-from pyecharts.components import Table
-from pyecharts.faker import Faker
-from pyecharts.globals import ThemeType
-
-
-# 将每个图 封装到 函数
-
 # 1.条形图
 def bar_datazoom_slider() -> Bar:
     c1 = (
@@ -868,7 +853,6 @@ def bar_datazoom_slider() -> Bar:
         )
     )
     return c1
-
 
 # 2.带标记点的折线图
 def line_markpoint() -> Line:
@@ -889,7 +873,6 @@ def line_markpoint() -> Line:
         .set_global_opts(title_opts=opts.TitleOpts(title="Line-MarkPoint"))
     )
     return c2
-
 
 # 3.玫瑰型饼图
 def pie_rosetype() -> Pie:
@@ -916,10 +899,6 @@ def pie_rosetype() -> Pie:
         .set_global_opts(title_opts=opts.TitleOpts(title="Pie-玫瑰图示例"))
     )
     return c
-
-
-
-
 
 def page_simple_layout():
     # page = Page(layout=Page.SimplePageLayout)  # 简单布局
