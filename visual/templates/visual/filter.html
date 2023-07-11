@@ -54,7 +54,6 @@
                             <!-- 默认hidden显示为Feature Selection -->
                             <option value="">Feature Selection</option>
                             {% for key, value in mselect_dict.items %}
-                                <!-- <option value="{{ value.select }}" selected>{{ key }}</option> -->
                                 <option value="{{ value.select }}">{{ key }}</option>
                             {% endfor %}
                         </select>
@@ -65,31 +64,84 @@
                 <div class="visible content">维度选择</div>
                 <div class="hidden content">确认</div>
             </div>
-            <h3 class="ui header" id="select_data_file">数据文件选择</h3>
-            <div class="field"><div class="fields"></div>
+
+
+
+
+
+<!--            <h3 class="ui header" id="select_data_file">数据文件选择</h3>-->
+<!--            <div class="field"><div class="fields"></div>-->
+<!--                <div class="fields">-->
+<!--                    <div class="fifteen wide field">-->
+<!--                        <select name="file_selection" id="file_selection" class="ui fluid multiple search dropdown">-->
+<!--                            &lt;!&ndash; 默认hidden显示为Feature Selection &ndash;&gt;-->
+<!--                            <option value="">File Selection</option>-->
+<!--                            {% for key, value in mselect_dict.items %}-->
+<!--                                    <option value="{{ value.select }}">{{ key }}</option>-->
+<!--                            {% endfor %}-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="ui blue animated button" tabindex="0" id='select_data_file_'>-->
+<!--                <div class="visible content">数据文件选择</div>-->
+<!--                <div class="hidden content">确认</div>-->
+<!--            </div>-->
+<!--            <div class="ui buttons">haoshi-->
+<!--                <input class="ui blue button" type='button' id='AJAX_get_1' value="选择"/>-->
+<!--            </div>-->
+        </div>
+        <div action="" method="post">
+            <!-- 在Django所有的 POST 表单元素时，需要加上下方的csrf_token tag，主要是安全方面的机制，本例后续使用AJAX方法，这里的POST class和token都不生效 -->
+            {% csrf_token %}
+            <h3 class="ui header" id="choose1">Process</h3>
+            <div class="field">
+                <div class="fields"></div>
                 <div class="fields">
                     <div class="fifteen wide field">
-                        <select name="file_selection" id="file_selection" class="ui fluid multiple search dropdown">
-                            <!-- 默认hidden显示为Feature Selection -->
-                            <option value="">File Selection</option>
-                            {% for key, value in mselect_dict.items %}
-                                    <!-- <option value="{{ value.select }}" selected>{{ key }}</option> -->
-                                    <option value="{{ value.select }}">{{ key }}</option>
+                        <select name="Feature_opt" id="process_choose" class="ui fluid multiple search dropdown">
+                            <option value="">Feature Selection</option>
+                            {% for value in Process %}
+                                <option value="{{ value }}">{{ value }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="ui blue animated button" tabindex="0" id='select_data_file_'>
-                <div class="visible content">数据文件选择</div>
-                <div class="hidden content">确认</div>
-            </div>
+<!--            <div class="ui blue animated button" tabindex="0" id='AJAX_get1'>-->
+<!--                <div class="visible content">选择</div>-->
+<!--                <div class="hidden content">确认</div>-->
+<!--            </div>-->
             <div class="ui buttons">
                 <input class="ui blue button" type='button' id='AJAX_get_1' value="选择"/>
             </div>
         </div>
+
+
     </div>
 </div>
+
+<script type="text/javascript">
+    $("#AJAX_get_1").click(function (event){
+        event.preventDefault();
+<!--        alert('所选维度为 :'+ $("#process_choose").val());-->
+        var form_data = {
+            "process_choose": $("#process_choose").val(),
+
+        };
+        $.ajax({
+            url: '{% url 'visual:query1' %}',
+            type: 'GET',
+            data: form_data,
+            success: function(ret) {
+                $("#process_choose").html(ret['process_choose'])
+            },
+            error: function() {
+                console.log('failure')
+            }
+        });
+    })
+</script>
 <script type="text/javascript">
     $("#show_data").click(function (event){
         event.preventDefault();
@@ -110,13 +162,10 @@
         event.preventDefault();
         alert('所选维度为: ' + $("#Feature1").val() + ' 和 ' + $("#Feature2").val() +
                     '\n' + '所选辅助维度为: ' + $("#Feature_opt").val());
-<!--        chart.showLoading({-->
-<!--          text : '正在加载数据'-->
-<!--        });-->
         var dimmer = $("#dimmer");
-                    dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
-                    dimmer.children('div').remove(); // 删除初始化文字
-                    dimmer.append('<div class="ui text loader">数据加载中……</div>'); // 增加loading效果和文字
+        dimmer.attr('class', 'ui active dimmer'); // 点击筛选按钮后dimmer变成active
+        dimmer.children('div').remove(); // 删除初始化文字
+        dimmer.append('<div class="ui text loader">数据加载中……</div>'); // 增加loading效果和文字
         var form_data = {
             "Feature1": $("#Feature1").val(),
             "Feature2": $("#Feature2").val(),
@@ -158,3 +207,4 @@
     $('.ui.fluid.search.dropdown')
         .dropdown({ fullTextSearch: true });
 </script>
+
