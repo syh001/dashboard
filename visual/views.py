@@ -56,8 +56,6 @@ def get_kpi(df, column, axis = 0):
 
     df = df.loc[:, [column]]
 
-    # print(df)
-    # print(df.mean(axis))
     try:
         df_mean = df.mean(axis)[0]
         df_std = df.std(axis)[0]

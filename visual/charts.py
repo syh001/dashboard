@@ -740,8 +740,9 @@ def echarts_two_test(df, process_choose):
 
             ),
 
-        )
+            ),
     )
+
     bar1.set_global_opts(
                         xaxis_opts=opts.AxisOpts(grid_index=1),
                         yaxis_opts=opts.AxisOpts(position='right',
@@ -853,8 +854,6 @@ from pyecharts.faker import Faker
 from pyecharts.globals import ThemeType
 
 
-# 将每个图 封装到 函数
-
 # 1.条形图
 def bar_datazoom_slider() -> Bar:
     c1 = (
@@ -916,9 +915,6 @@ def pie_rosetype() -> Pie:
         .set_global_opts(title_opts=opts.TitleOpts(title="Pie-玫瑰图示例"))
     )
     return c
-
-
-
 
 
 def page_simple_layout():
