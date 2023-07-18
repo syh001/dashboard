@@ -918,19 +918,17 @@ def pie_rosetype() -> Pie:
 
 
 def page_simple_layout():
-    # page = Page(layout=Page.SimplePageLayout)  # 简单布局
-    # # 将上面定义好的图添加到 page
-    # page.add(
-    #     bar_datazoom_slider(),
-    #     line_markpoint(),
-    #     pie_rosetype(),
-    # )
-    tab = Tab()
-    tab.add(bar_datazoom_slider(), 'tab1')
-    tab.add(line_markpoint(), 'tab2')
+    page = Page(layout=Page.SimplePageLayout)  # 简单布局
+    page.add(
+        bar_datazoom_slider(),
+        line_markpoint(),
+        pie_rosetype(),
+    )
+    # tab = Tab()
+    # tab.add(bar_datazoom_slider(), 'tab1')
+    # tab.add(line_markpoint(), 'tab2')
     # tab.add(pie_rosetype(), "pie-example")
-    tab.render('./templates/tab.html')
-    # return tab
+    return page
 
 
 

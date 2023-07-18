@@ -1,15 +1,15 @@
 {% extends "visual/analysis.html" %}
 {% block display %}
+{% load static %}
 <!-- 创建2个Semantic UI tab，根据鼠标点击切换，以保证页面干净清爽 -->
-
 <div class="ui pointing secondary menu">
-    <a class="item active" data-tab="Summary"><i class="circle icon"></i>Summary</a>
+    <a class="item" data-tab="Summary"><i class="circle icon"></i>Summary</a>
     <a class="item" data-tab="Feature"><i class="trophy icon"></i>Feature</a>
     <a class="item" data-tab="show_all"><i class="circle icon"></i>show_all</a>
-    <a class="item" data-tab="plot"><i class="circle icon"></i>plot</a>
+    <a class="item active" data-tab="plot"><i class="circle icon"></i>plot</a>
 </div>
 
-<div class="ui tab segment active" data-tab="Summary">
+<div class="ui tab segment" data-tab="Summary">
     <!-- 数据处理时的loading遮罩 -->
     <div class="ui active dimmer" id="dimmer">
         <div class="ui text" style="color: #ffffff">
@@ -99,6 +99,10 @@
         <!-- Django渲染html代码时需要加入|safe，保证html不会被自动转义 -->
         {{ data_|safe }}
     </div>
+    <div class="ui container" id='data_1' style="width: 100%; overflow-x: scroll; overflow-y: hidden;">
+        <!-- Django渲染html代码时需要加入|safe，保证html不会被自动转义 -->
+        {{ Feature_opt|safe }}
+    </div>
 </div>
 
 <div class="ui tab segment" data-tab="show_all">
@@ -114,125 +118,10 @@
     </div>
 </div>
 
-<div class="ui tab segment" data-tab="plot">
-    <div class="ui celled grid">
-        <div class="thirteen wide column">
-<!--            <h3 class="ui header">-->
-<!--                <div class="content">-->
-<!--                    Figure-->
-<!--                    <div class="sub header">图形展示区域</div>-->
-<!--                </div>-->
-<!--            </h3>-->
-            <div class="ui divider"></div>
-
-            <div class="ui container">
-                <div id="total_trend" style="width:1000px; height:600px;"></div>
-            </div>
-
-            <div class="ui buttons" style="display:block;margin:0 auto">
-                <input class="ui green button" type='button' id='plot_next' style="display:block;margin:0 auto" value="plot"/>
-            </div>
-        </div>
-
-        <div class="three wide column">
-            <div class="ui container">
-                <div class="ui form">
-                    <h3 class="ui header" id="analysis">Choose Plot Type</h3>
-                    <div class="field">
-                        <div class="fields"></div>
-
-                        <div class="fields">
-                            <div class="ten wide field">
-                                <button data-uid="vis-type-button" id="plot_stack" class="vis-thumb svelte-1kl8maj">
-                                    <div class="svelte-1kl8maj">
-                                        <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-                                            <style type="text/css">
-                                                .st0{opacity:0.5;enable-background:new    ;}
-                                                .st1{fill:#FF00FF;}
-                                            </style>
-                                            <rect y="37.7" width="29.3" height="47.3"></rect>
-                                            <rect x="36" width="28" height="85"></rect>
-                                            <rect x="72" y="25.8" width="28" height="59.2"></rect>
-                                        </svg>
-                                        <div class="vis-title svelte-1kl8maj">柱状图</div>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-
-
-<!--                        <div class="fields"></div>-->
-<!--                        <div class="fields">-->
-<!--                            <div class="ten wide field">-->
-<!--                                <button data-uid="vis-type-button" id="plot_scatter" class="vis-thumb svelte-1kl8maj">-->
-<!--                                    <div class="svelte-1kl8maj">-->
-<!--                                        <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">-->
-<!--                                            <style type="text/css">-->
-<!--                                                .st0{opacity:0.5;enable-background:new    ;}-->
-<!--                                            </style>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 -48.8751 57.1552)" cx="9.2" cy="57.4" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 -72.6394 104.1435)" cx="25" cy="94.9" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 47.4138 74.5123)" class="st0" cx="67.6" cy="9.3" rx="9.3" ry="9.3"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 19.453 77.4935)" cx="55.4" cy="27.3" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 68.5168 97.9731)" cx="92" cy="8.6" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 -19.0307 99.9806)" class="st0" cx="49.4" cy="61.2" rx="21.2" ry="21.2"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 -14.0072 54.8347)" cx="25.3" cy="35.7" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 35.0296 111.2484)" class="st0" cx="83.1" cy="35" rx="9.3" ry="9.3"></ellipse>-->
-<!--                                            <ellipse transform="matrix(0.1628 -0.9867 0.9867 0.1628 11.9821 132.1048)" cx="83.8" cy="59" rx="4.7" ry="4.7"></ellipse>-->
-<!--                                        </svg>-->
-<!--                                        <div class="vis-title svelte-1kl8maj">散点图</div>-->
-<!--                                    </div>-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-                        <div class="fields"></div>
-                        <div class="fields">
-                            <div class="ten wide field">
-                                <button data-uid="vis-type-button" id="plot_line" class="vis-thumb svelte-1kl8maj">
-                                    <div class="svelte-1kl8maj">
-                                        <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-                                        <style type="text/css">
-                                            .st0{opacity:0.5;}
-                                        </style>
-                                        <path class="st0" d="M7.9,42.7c-0.8,0-1.6,0.3-2.2,0.8c-1.6,1.2-1.7,3.4-0.5,4.9L33,83.2c0.7,0.8,1.7,1.3,2.7,1.3
-                                            c0.6,0,1.4-0.3,2-0.6l28-19.4L92,66.7c0.1,0,0.2,0,0.3,0c1.9,0,3.3-1.4,3.5-3.2c0.2-2-1.3-3.7-3.2-3.8l-27.5-2.4
-                                            c-0.8,0-1.6,0.2-2.3,0.6L36.5,76.3L10.6,44.1C9.9,43.2,8.9,42.7,7.9,42.7"></path>
-                                        <path d="M8.8,68.9c-0.7,0-1.6-0.3-2.2-0.7C5.1,67,4.8,64.8,6,63.3L32.8,29c1-1.3,2.8-1.7,4.3-1L62.2,40L89.4,2
-                                            c1.1-1.6,3.3-1.9,4.9-0.8c1.6,1.1,1.9,3.3,0.8,4.9L66.3,46.5c-1,1.4-2.8,1.9-4.4,1.1L36.7,35.5l-25.2,32
-                                            C10.9,68.5,9.9,68.9,8.8,68.9z"></path>
-                                        </svg>
-                                        <div class="vis-title svelte-1kl8maj">折线图</div>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="fields"></div>
-                        <div class="fields">
-                            <div class="ten wide field">
-                                <button data-uid="vis-type-button" id="plot_combine" class="vis-thumb svelte-1kl8maj">
-                                    <div class="svelte-1kl8maj">
-                                        <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
-                                        <style type="text/css">
-                                            .st0{opacity:0.5;}
-                                        </style>
-                                        <rect x="36" width="28" height="85"></rect>
-                                        <path class="st0" d="M7.9,42.7c-0.8,0-1.6,0.3-2.2,0.8c-1.6,1.2-1.7,3.4-0.5,4.9L33,83.2c0.7,0.8,1.7,1.3,2.7,1.3
-                                            c0.6,0,1.4-0.3,2-0.6l28-19.4L92,66.7c0.1,0,0.2,0,0.3,0c1.9,0,3.3-1.4,3.5-3.2c0.2-2-1.3-3.7-3.2-3.8l-27.5-2.4
-                                            c-0.8,0-1.6,0.2-2.3,0.6L36.5,76.3L10.6,44.1C9.9,43.2,8.9,42.7,7.9,42.7"></path>
-                                        </svg>
-                                        <div class="vis-title svelte-1kl8maj">组合图</div>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="ui tab segment active" data-tab="plot">
+    {% block plot %}{% endblock %}
 </div>
+
 
 <!-- 下方js为保证Semantic UI tab类工作 -->
 <script>
@@ -313,5 +202,22 @@
             }
         });
     })
+<!--    $("#return_index").click(function (event) {-->
+<!--        event.preventDefault();-->
+<!--        alert('重新选择按钮生效！');-->
+<!--        $.ajax({-->
+<!--            url: '{% url 'visual:index' %}'-->
+<!--            type: 'GET',-->
+<!--            data: 'Plot',-->
+<!--            success: function(ret) {-->
+<!--                chart.clear();-->
+<!--                chart.setOption(ret['total_trend']);-->
+<!--                chart.hideLoading();-->
+<!--            },-->
+<!--            error: function() {-->
+<!--                console.log('failure')-->
+<!--            }-->
+<!--        });-->
+<!--    })-->
 </script>
 {% endblock %}

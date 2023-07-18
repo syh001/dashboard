@@ -6,6 +6,7 @@ import os
 from django.shortcuts import render, redirect
 import json
 from .charts import *
+
 try:
     import six
 except ImportError:
@@ -15,6 +16,7 @@ import json
 from random import randrange
 
 from django.http import HttpResponse
+
 # from rest_framework.views import APIView
 root_path = './'
 sourth_path = 'C:/Users/sas053/Desktop/dataset'
@@ -23,15 +25,17 @@ file_name = 'test.csv'
 file_name_save = 'return_test.xlsx'
 
 global DF
-DF = pd.read_csv('C:/Users/1000300246/Desktop/test_drawpic.csv')
+DF = pd.read_csv('C:/Users/1000300246/Desktop/HDDMagnetic.csv')
+
 
 def test_read_speed():
     since = time.time()
     print('it costs: ', time.time() - since, 's to load the file')
-    print(DF.memory_usage().sum()/(1024**2), 'MB')
+    print(DF.memory_usage().sum() / (1024 ** 2), 'MB')
     since = time.time()
-    df_col = DF.iloc[:,7]
+    df_col = DF.iloc[:, 7]
     print('it costs: ', time.time() - since, 's to load the column')
+
 
 def read_data(source_path, target_path, file_name, file_name_save):
     source_file = source_path + file_name
@@ -52,8 +56,7 @@ def read_data(source_path, target_path, file_name, file_name_save):
     return df
 
 
-def get_kpi(df, column, axis = 0):
-
+def get_kpi(df, column, axis=0):
     df = df.loc[:, [column]]
 
     try:
@@ -70,19 +73,40 @@ def get_kpi(df, column, axis = 0):
         "df_median": df_median,
     }
 
+
 # 该字典key为前端准备显示的所有多选字段名, value为数据库对应的字段名
 D_MULTI_SELECT = {
-    'Feature 1 | 特征 1': 'feature_1',
-    'Feature 2 | 特征 2': 'feature_2',
-    'Feature 3 | 特征 3': 'feature_3',
-    'Feature 4 | 特征 4': 'feature_4',
-    'Feature 5 | 特征 5': 'feature_5',
-    'Feature 10 | 特征 10': 'feature_10',
-    'Feature 20 | 特征 20': 'feature_20',
-    'Feature 30 | 特征 30': 'feature_30',
-    'Feature 40 | 特征 40': 'feature_40',
-    'Feature 50 | 特征 50': 'feature_50',
+    'YC': ['Yield', 'EC'],
+    'Magnetic': ['ACC', 'MCW', 'Roller SER'],
+    'Reader HI': ['1k-BEM(Rd)NT', '1k-BEM(Rd)HT', 'Bi-state XTI Profile (writer induced HI)', '172c'],
+    'PE': ['PE NT (Degauss on)', 'PE HT (Degauss off/on)'],
+    'XTI': ['XTI NT', 'XTI HT'],
+    'XTI Degradation': ['Delta XTI', 'Delta OWC'],
+    'Writer instability': ['1K-BEM (WrRd) HT', 'RV_Range', 'B_Allband'],
+    'Writer degradation': ['Delta MCW', 'Delta SER', 'Delta OW'],
+    'Write-short': ['UEC (S5W, Func, SRST, Fin & Featuring)'],
 }
+
+def index(request):
+    mselect_dict = {}
+    dic = {}
+    form_dict = dict(six.iterlists(request.GET))
+    df = DF
+    dct = columns2dictionary(df)
+    for key, value in dct.items():
+        mselect_dict[key] = {}
+        mselect_dict[key]['select'] = value
+        mselect_dict[key]['options'] = get_distinct_list(df, value)  # 以后可以后端通过列表为每个多选控件传递备选项
+        dic[key] = list(set(get_distinct_list(df, value).tolist()))
+    print('mselect_dict', mselect_dict)
+    context = {
+        'mselect_dict': mselect_dict,
+        'D_MULTI_SELECT': D_MULTI_SELECT,
+        'Product': dic['PRODUCT'],
+        'Model': dic['HDD_Model'],
+    }
+    # 下面一定要返回子模板，否则的话是block与endblock失效的原因！！！
+    return render(request, 'visual/plot.html', context)
 
 def columns2dictionary(df):
     """
@@ -93,6 +117,7 @@ def columns2dictionary(df):
 
     return dictionary
 
+
 def get_distinct_list(df, column):
     """
     获取一个feature下的不同的值，通过unique()函数
@@ -101,6 +126,7 @@ def get_distinct_list(df, column):
     # print(df[column].unique())
     l = df[column].unique()
     return l
+
 
 def search(request, column, kw, df):
     try:
@@ -123,13 +149,15 @@ def search(request, column, kw, df):
             "errMsg": e,
             "code": 0,
         }
-    return HttpResponse(json.dumps(res, ensure_ascii=False), content_type="application/json charset=utf-8") # 返回结果必须是json格式
+    return HttpResponse(json.dumps(res, ensure_ascii=False),
+                        content_type="application/json charset=utf-8")  # 返回结果必须是json格式
 
 
 def choose_file(request):
     file_list_dict = dict(six.iterlists(request.GET))
     file_list = os.path()
     return file_list
+
 
 def showdata(request, df=DF):
     # data = dict(six.iterlists(request.GET))
@@ -138,6 +166,7 @@ def showdata(request, df=DF):
     }
     return HttpResponse(json.dumps(con, ensure_ascii=False),
                         content_type="application/json charset=utf-8")
+
 
 def query(request, data=DF):
     form_dict = dict(six.iterlists(request.GET))
@@ -153,10 +182,9 @@ def query(request, data=DF):
         for i in multi_con:
             box.append(i)
         kpi = get_kpi(df, x_feature)
-        # df = df.loc[:, [x_feature]]
         df = df.loc[:, box]
-    # print(x_feature, y_feature, multi_con)
     box_df = pd.DataFrame(df)
+    print('aaaaaaa', x_feature, y_feature, kpi)
     context = {
         "df_mean": kpi["df_mean"],
         "df_std": kpi["df_std"],
@@ -166,6 +194,7 @@ def query(request, data=DF):
     }
     return HttpResponse(json.dumps(context, ensure_ascii=False),
                         content_type="application/json charset=utf-8")  # 返回结果必须是json格式
+
 
 def query1(request, data=DF):
     form_dict = dict(six.iterlists(request.GET))
@@ -196,11 +225,10 @@ def plot(request):
         chart = echarts_stackbar(DF, x_feature, y_feature, box)
 
     elif type == 'Plot':
-
-        chart = echarts_two_test(query1_data, process_choose)
+        chart = page_simple_layout()
+        # chart = echarts_two_test(query1_data, process_choose)
 
     chart = chart.dump_options()
-
 
     total_trend = json.loads(chart)
     # print('total_trend', type(total_trend))
@@ -211,24 +239,6 @@ def plot(request):
     return HttpResponse(json.dumps(context, ensure_ascii=False),
                         content_type="application/json charset=utf-8")
 
-def index(request):
-    mselect_dict = {}
-    dic = {}
-    form_dict = dict(six.iterlists(request.GET))
-    df = DF
-    dct = columns2dictionary(df)
-    for key, value in dct.items():
-        mselect_dict[key] = {}
-        mselect_dict[key]['select'] = value
-        mselect_dict[key]['options'] = get_distinct_list(df, value) # 以后可以后端通过列表为每个多选控件传递备选项
-        dic[key] = list(set(get_distinct_list(df, value).tolist()))
-    # print('dic', dic)
-    # print('Pricess', dic['Process'])
-    context = {
-        'mselect_dict': mselect_dict,
-        'Process': dic['Process'],
-    }
-    return render(request, 'visual/display.html', context)
 
 def blog(request):
     mselect_dict = {}
@@ -238,11 +248,12 @@ def blog(request):
     for key, value in dct.items():
         mselect_dict[key] = {}
         mselect_dict[key]['select'] = value
-        mselect_dict[key]['options'] = get_distinct_list(df, value) # 以后可以后端通过列表为每个多选控件传递备选项
+        mselect_dict[key]['options'] = get_distinct_list(df, value)  # 以后可以后端通过列表为每个多选控件传递备选项
     context = {
         'mselect_dict': mselect_dict,
     }
     return render(request, 'visual/blog_main_display.html', context)
+
 
 def choose_path_file():
     import os
@@ -256,6 +267,7 @@ def choose_path_file():
         for filename in filenames:
             print("Parent folder:", parent)
             print("Filename:", filename)
+
 
 def response_as_json(data):
     json_str = json.dumps(data)
@@ -302,3 +314,47 @@ def bar_base() -> Bar:
     return c
 
 
+def get_process_name(request):
+    product_choose = request.POST.get("product_choose")
+    model_choose = request.POST.get("model_choose")
+    df_pho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'PHO')]
+    df_pho = df_pho.dropna()
+    df_tho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'THO')]
+    df_tho = df_tho.dropna()
+    pho_qty = [np.array(df_pho['QTY_6400']).tolist(), np.array(df_pho['MCW_MD']).tolist(),
+               np.array(df_pho['Resi_pACC']).tolist()]
+
+    pho_line = [np.array(df_pho['Resi_OWP_MD_Post']).tolist(), np.array(df_pho['Resi_FinalSER']).tolist()]
+
+    tho_qty = [np.array(df_tho['QTY_6400']).tolist(), np.array(df_tho['MCW_MD']).tolist(),
+               np.array(df_tho['Resi_pACC']).tolist()]
+    tho_line = [np.array(df_tho['Resi_OWP_MD_Post']).tolist(), np.array(df_tho['Resi_FinalSER']).tolist()]
+    col_name = ['QTY_6400', 'MCW_MD', 'Resi_pACC', 'Resi_OWP_MD_Post', 'Resi_FinalSER']
+    lis1 = ['a', 'b', 'c', 'd', 'Fri', 'Sat', 'Sun']
+    lis2 = [150, 230, 224, 218, 135, 147, 260]
+
+    # col_name = ['Evaporation', 'Precipitation', 'Temperature', 'temp']
+    # x_date = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    # bar_1 =[
+    #     2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
+    #   ]
+    # bar_2 =[
+    #     2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
+    #   ]
+    # line_1 =[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+    # line_2 =[20.3, 23.4, 23.0, 16.5, 12.0, 6.2, 2.0, 2.2, 3.3, 4.5, 6.3, 10.2]
+    return render(request, './visual/plot.html', {
+        "pho_qty": pho_qty,
+        "pho_line": pho_line,
+        "tho_qty": tho_qty,
+        "tho_line": tho_line,
+        "col_name": col_name,
+        "pho_date": np.array(df_pho['Date']).tolist(),
+        "tho_date": np.array(df_tho['Date']).tolist(),
+        "lis1" : lis1,
+        "lis2" : lis2,
+
+
+        "product_choose": product_choose,
+        "model_choose": model_choose
+    })
