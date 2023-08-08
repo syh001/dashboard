@@ -65,83 +65,66 @@
                 <div class="hidden content">确认</div>
             </div>
         </div>
+
         <div class="row">
             <form name="process_form" action="/visual/get_process_name" method="post" style="height:438px;">
                 {% csrf_token %}
-                <h3 class="ui header" id="choose1">First choose</h3>
                 <div class="field">
                     <div class="fields">
                         <div class="fifteen wide field">
-                            <select name="product_choose" id="product_choose" class="ui fluid multiple search dropdown">
-                                <option value="">{{ product_choose }}</option>
-                                {% for value in Product %}
-                                    <option value="{{ value }}" >{{ value }}</option>
-                                {% endfor %}
+                            <h3 class="ui header" id="choose1">First choose</h3>
+                            <select id="independent" name="independent">
+                                <option value="" disabled selected hidden>{{independent}}</option>
+                                <option value="YC"> YC </option>
+                                <option value="Magnetic"> Magnetic </option>
+                                <option value="Reader HI"> Reader HI </option>
+                                <option value="PE"> PE </option>
+                                <option value="XTI"> XTI </option>
+                                <option value="XTI Degradation"> XTI Degradation </option>
+                                <option value="Writer instability"> Writer instability </option>
+                                <option value="Writer degradation"> Writer degradation </option>
+                                <option value="Write-short"> Write-short </option>
+                            </select>
+                            <h3 class="ui header" id="choose2">Second choose</h3>
+                            <div class="fields"></div>
+                            <select id="dependent" name="dependent">
+                                <option value="">{{parameter}}</option>
+                                <option value="Yield"> Yield </option>
+                                <option value="EC"> EC </option>
+                                <option value="ACC"> ACC </option>
+                                <option value="MCW"> MCW </option>
+                                <option value="Roller SER"> Roller SER </option>
+                                <option value="1k-BEM(Rd)NT"> 1k-BEM(Rd)NT </option>
+                                <option value="1k-BEM(Rd)HT"> 1k-BEM(Rd)HT </option>
+                                <option value="Bi-state XTI Profile (writer induced HI)"> Bi-state XTI Profile (writer induced HI) </option>
+                                <option value="172c"> 172c </option>
+                                <option value="PE NT (Degauss on)"> PE NT (Degauss on) </option>
+                                <option value="PE HT (Degauss off/on)"> PE HT (Degauss off/on) </option>
+                                <option value="XTI NT"> XTI NT </option>
+                                <option value="XTI HT"> XTI HT </option>
+                                <option value="Delta XTI"> Delta XTI </option>
+                                <option value="Delta OWC"> Delta OWC </option>
+                                <option value="1K-BEM (WrRd) HT"> 1K-BEM (WrRd) HT </option>
+                                <option value="RV_Range"> RV_Range </option>
+                                <option value="B_Allband"> B_Allband </option>
+                                <option value="Delta MCW"> Delta MCW </option>
+                                <option value="Delta SER"> Delta SER </option>
+                                <option value="Delta OW"> Delta OW </option>
+                                <option value="UEC (S5W, Func, SRST, Fin & Featuring)"> UEC (S5W, Func, SRST, Fin & Featuring) </option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <h3 class="ui header" id="choose2">Second choose</h3>
-                <div class="field">
-                    <div class="fields">
-                        <div class="fifteen wide field">
-                            <select name="model_choose" id="model_choose" class="ui fluid multiple search dropdown">
-                                <option value="">{{ model_choose }}</option>
-                                {% for value in Model %}
-                                    <option value="{{ value }}" >{{ value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="row" style="text-align: center;margin-top: 30px;">
                     <button class="ui positive basic button">画图</button>
                 </div>
             </form>
+            <div class="row" style="text-align: center;">
+                <a href="/visual/index">
+                    <button class="ui secondary basic button">重现选择</button>
+                </a>
+            </div>
         </div>
-
-<!--        <div class="row">-->
-<!--            <form name="process_form" action="/visual/get_process_name" method="post" style="height:438px;">-->
-<!--                {% csrf_token %}-->
-<!--                <h3 class="ui header" id="choose1">Product</h3>-->
-<!--                <div class="field">-->
-<!--                    <div class="fields">-->
-<!--                        <div class="fifteen wide field">-->
-<!--                            <select name="product_choose" id="product_choose" class="ui fluid multiple search dropdown">-->
-<!--                                <option value="">{{ product_choose }}</option>-->
-<!--                                {% for value in Product %}-->
-<!--                                    <option value="{{ value }}" >{{ value }}</option>-->
-<!--                                {% endfor %}-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <h3 class="ui header" id="choose2">HDD_Model</h3>-->
-<!--                <div class="field">-->
-<!--                    <div class="fields">-->
-<!--                        <div class="fifteen wide field">-->
-<!--                            <select name="model_choose" id="model_choose" class="ui fluid multiple search dropdown">-->
-<!--                                <option value="">{{ model_choose }}</option>-->
-<!--                                {% for value in Model %}-->
-<!--                                    <option value="{{ value }}" >{{ value }}</option>-->
-<!--                                {% endfor %}-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="row" style="text-align: center;margin-top: 30px;">-->
-<!--                    <button class="ui positive basic button">画图</button>-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
-        <div class="row" style="text-align: center;">
-            <a href="/visual/index">
-                <button class="ui secondary basic button">重现选择</button>
-            </a>
-        </div>
-
     </div>
 </div>
 
@@ -230,5 +213,38 @@
 <script>
     $('.ui.fluid.search.dropdown')
         .dropdown({ fullTextSearch: true });
+</script>
+<script>
+
+
+    $(document).ready(function() {
+      $("#dependent > option").hide();
+      $(document).on('change', '#independent', function() {
+        var independent_val = $(this).val();
+        $("#dependent > option").hide();
+        let option_list = ['YC', 'Magnetic', 'Reader HI', 'PE', 'XTI', 'XTI Degradation', 'Writer instability', 'Writer degradation', 'Write-short'];
+        let D_MULTI_SELECT = {
+            'YC': ['Yield', 'EC'],
+            'Magnetic': ['ACC', 'MCW', 'Roller SER'],
+            'Reader HI': ['1k-BEM(Rd)NT', '1k-BEM(Rd)HT', 'Bi-state XTI Profile (writer induced HI)', '172c'],
+            'PE': ['PE NT (Degauss on)', 'PE HT (Degauss off/on)'],
+            'XTI': ['XTI NT', 'XTI HT'],
+            'XTI Degradation': ['Delta XTI', 'Delta OWC'],
+            'Writer instability': ['1K-BEM (WrRd) HT', 'RV_Range', 'B_Allband'],
+            'Writer degradation': ['Delta MCW', 'Delta SER', 'Delta OW'],
+            'Write-short': ['UEC (S5W, Func, SRST, Fin & Featuring)'],
+        };
+        for (var option in option_list) {
+            var op_val = option_list[option];
+            if (independent_val == op_val) {
+              $("#dependent > option").each(function() {
+                var dependent_val = $(this).val();
+                if (D_MULTI_SELECT[op_val].includes(dependent_val))
+                  $(this).show();
+              });
+            }
+        }
+      });
+    });
 </script>
 

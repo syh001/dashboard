@@ -1,31 +1,63 @@
 {% extends "visual/display.html" %}
 {% block plot %}
 {% load static %}
+    <input type="hidden" value="{{flag}}" id="flag">
     <div>
-        <div id="main03" style="width: 1100px;height:500px;"></div>
+        <div id="Test" style="width: 1100px;height:500px;"></div>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="text/javascript">
-            var myChart=echarts.init(document.getElementById('main03'));
-            const colors = ['#5470C6', '#91CC75', '#EE6666', '#93CE07', '#FBDB0F'];
-            var col_name = {{col_name|safe}};
-            var pho_date = {{pho_date|safe}};
-            var bar = {{pho_qty|safe}};
-            var line = {{pho_line|safe}};
+            var myChart=echarts.init(document.getElementById('Test'));
+            data1 = {{lis1|safe}};
+            data2 = {{lis2|safe}};
+            var option = {
+              title : {
+                text : 'Example plot',
+                left : '1%'
+              },
+              xAxis: {
+                data: data1,
+                type: 'category'
+              },
+              yAxis: {
+                type: 'value'
+              },
+              series: [
+                {
+                  data: data2,
+                  type: 'line'
+                }
+              ]
+            };
+            myChart.setOption(option);
+         </script>
+    </div>
+
+
+    <div>
+        <div id="Magnetic" style="width: 1100px;height:500px;"></div>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script type="text/javascript">
+            var myChart=echarts.init(document.getElementById('Magnetic'));
+            dict = {{dict|safe}};
 
             var option = {
-                  title : {
-                    text : 'xxx for PHO',
-                    left : '1%'
+                  title: {
+                    text: 'Line Plot'
                   },
-                  color: colors,
                   tooltip: {
                     trigger: 'axis',
                     axisPointer: {
                       type: 'cross'
                     }
                   },
+                  legend: {
+                    orient: "vertical",
+                    x: "right",
+                    y: "center",
+                    data: ['LDS', 'PCM', '18TB CMR', '22TB CMR', 'FC5', 'GD2b', 'PHO', 'THO', 'SZ', 'SC3h', 'SL6a', 'SMD+NOM', 'G0', 'G1', 'G4', 'U1', 'U2']
+                  },
                   grid: {
-                    right: '20%'
+                    right: '20%',
                   },
                   toolbox: {
                     feature: {
@@ -36,9 +68,6 @@
                       restore: { show: true },
                       saveAsImage: { show: true }
                     }
-                  },
-                  legend: {
-                    data: col_name
                   },
                   dataZoom: [
                     {
@@ -56,109 +85,453 @@
                       xAxisIndex: [0, 1]
                     }
                   ],
-                  xAxis: [
-                    {
-                      type: 'category',
-                      axisTick: {
+                  xAxis: {
+                    type: 'category',
+                    axisTick: {
                         alignWithLabel: true
-                      },
-                      data: pho_date
-                    }
-                  ],
-                  yAxis: [
-                    {
-                      type: 'value',
-                      name: 'QTY',
-                      position: 'right',
-                      alignTicks: true,
-                      axisLine: {
-                        show: true,
-                        lineStyle: {
-                          color: colors[0]
-                        }
-                      },
-                      axisLabel: {
-                        formatter: '{value}'
-                      }
                     },
-                    {
-                      type: 'value',
-                      name: 'xACC',
-                      position: 'left',
-                      alignTicks: true,
-                      axisLine: {
-                        show: true,
-                        lineStyle: {
-                          color: colors[3]
-                        }
-                      },
-                      axisLabel: {
-                        formatter: '{value}'
-                      }
-                    }
-                  ],
+                    data: dict['Date']
+                  },
+                  yAxis: {
+                    type: 'value',
+                    name: 'MCW'
+<!--                    min: 50,-->
+<!--                    max: 70-->
+                  },
                   series: [
                     {
-                      name: col_name[0],
-                      type: 'bar',
-                      data: bar[0]
-                    },
-                    {
-                      name: col_name[1],
-                      type: 'bar',
-                      data: bar[1]
-                    },
-                    {
-                      name: col_name[2],
-                      type: 'bar',
-                      data: bar[2]
-                    },
-                    {
-                      name: col_name[3],
+                      name: 'LDS',
                       type: 'line',
-                      yAxisIndex: 1,
-                      data: line[0]
+                      data: dict['LDS'],
+                      connectNulls:true
                     },
                     {
-                      name: col_name[4],
+                      name: 'PCM',
                       type: 'line',
-                      yAxisIndex: 1,
-                      data: line[1]
+                      data: dict['PCM'],
+                      connectNulls:true
+                    },
+                    {
+                      name: '18TB CMR',
+                      type: 'line',
+                      data: dict['18TB CMR'],
+                      connectNulls:true
+                    },
+                    {
+                      name: '22TB CMR',
+                      type: 'line',
+                      data: dict['22TB CMR'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'FC5',
+                      type: 'line',
+                      data: dict['FC5'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'GD2b',
+                      type: 'line',
+                      data: dict['GD2b'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'PHO',
+                      type: 'line',
+                      data: dict['PHO'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'THO',
+                      type: 'line',
+                      data: dict['THO'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SZ',
+                      type: 'line',
+                      data: dict['SZ'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SC3h',
+                      type: 'line',
+                      data: dict['SC3h'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SL6a',
+                      type: 'line',
+                      data: dict['SL6a'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SMD+NOM',
+                      type: 'line',
+                      data: dict['SMD+NOM'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G0',
+                      type: 'line',
+                      data: dict['G0'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G1',
+                      type: 'line',
+                      data: dict['G1'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G4',
+                      type: 'line',
+                      data: dict['G4'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'U1',
+                      type: 'line',
+                      data: dict['U1'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'U2',
+                      type: 'line',
+                      data: dict['U2'],
+                      connectNulls:true
                     }
                   ]
-            };
+                };
             myChart.setOption(option);
         </script>
     </div>
     <div>
-        <div id="main09" style="width: 1100px;height:500px;"></div>
+        <div id="XTI Degradation" style="width: 1100px;height:500px;"></div>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="text/javascript">
-            var myChart=echarts.init(document.getElementById('main09'));
-            data1 = {{lis1|safe}};
-            data2 = {{lis2|safe}};
-            var option = {
-              title : {
-                text : 'xxx for THO',
-                left : '1%'
-              },
-              xAxis: {
-                data: data1,
-                type: 'category'
+            var myChart=echarts.init(document.getElementById('XTI Degradation'));
+            dict = {{dict|safe}};
 
-              },
-              yAxis: {
-                type: 'value'
-              },
-              series: [
-                {
-                  data: data2,
-                  type: 'line'
-                }
-              ]
-            };
+            var option = {
+                  title: {
+                    text: 'Line Plot'
+                  },
+                  tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                      type: 'cross'
+                    }
+                  },
+                  legend: {
+                    orient: "vertical",
+                    x: "right",
+                    y: "center",
+                    data: ['LDS', 'PCM', '18TB CMR', '22TB CMR', 'FC5', 'GD2b', 'PHO', 'THO', 'SZ', 'SC3h', 'SL6a', 'SMD+NOM', 'G0', 'G1', 'G4', 'U1', 'U2']
+                  },
+                  grid: {
+                    right: '20%',
+                  },
+                  toolbox: {
+                    feature: {
+                      dataZoom:{
+                        yAxisIndex: 'none'
+                      },
+                      dataView: { show: true, readOnly: false },
+                      restore: { show: true },
+                      saveAsImage: { show: true }
+                    }
+                  },
+                  dataZoom: [
+                    {
+                      show: true,
+                      realtime: true,
+                      start: 30,
+                      end: 70,
+                      xAxisIndex: [0, 1]
+                    },
+                    {
+                      type: 'inside',
+                      realtime: true,
+                      start: 30,
+                      end: 70,
+                      xAxisIndex: [0, 1]
+                    }
+                  ],
+                  xAxis: {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    data: dict['Date']
+                  },
+                  yAxis: {
+                    type: 'value',
+                    name: 'Delta OWC',
+<!--                    min: 50,-->
+<!--                    max: 70-->
+                  },
+                  series: [
+                    {
+                      name: 'LDS',
+                      type: 'line',
+                      data: dict['LDS'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'PCM',
+                      type: 'line',
+                      data: dict['PCM'],
+                      connectNulls:true
+                    },
+                    {
+                      name: '18TB CMR',
+                      type: 'line',
+                      data: dict['18TB CMR'],
+                      connectNulls:true
+                    },
+                    {
+                      name: '22TB CMR',
+                      type: 'line',
+                      data: dict['22TB CMR'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'FC5',
+                      type: 'line',
+                      data: dict['FC5'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'GD2b',
+                      type: 'line',
+                      data: dict['GD2b'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'PHO',
+                      type: 'line',
+                      data: dict['PHO'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'THO',
+                      type: 'line',
+                      data: dict['THO'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SZ',
+                      type: 'line',
+                      data: dict['SZ'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SC3h',
+                      type: 'line',
+                      data: dict['SC3h'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SL6a',
+                      type: 'line',
+                      data: dict['SL6a'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'SMD+NOM',
+                      type: 'line',
+                      data: dict['SMD+NOM'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G0',
+                      type: 'line',
+                      data: dict['G0'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G1',
+                      type: 'line',
+                      data: dict['G1'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'G4',
+                      type: 'line',
+                      data: dict['G4'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'U1',
+                      type: 'line',
+                      data: dict['U1'],
+                      connectNulls:true
+                    },
+                    {
+                      name: 'U2',
+                      type: 'line',
+                      data: dict['U2'],
+                      connectNulls:true
+                    }
+                  ]
+                };
             myChart.setOption(option);
-         </script>
+        </script>
     </div>
+<!--    <div>-->
+<!--        <div id="bar_line" style="width: 1100px;height:500px;"></div>-->
+<!--        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>-->
+<!--        <script type="text/javascript">-->
+<!--            var myChart=echarts.init(document.getElementById('YC'));-->
+<!--            const colors = ['#5470C6', '#91CC75', '#EE6666', '#93CE07', '#FBDB0F'];-->
+<!--            var col_name = {{col_name|safe}};-->
+<!--            var pho_date = {{pho_date|safe}};-->
+<!--            var bar = {{pho_qty|safe}};-->
+<!--            var line = {{pho_line|safe}};-->
+
+<!--            var option = {-->
+<!--                  title : {-->
+<!--                    text : 'xxx for PHO',-->
+<!--                    left : '1%'-->
+<!--                  },-->
+<!--                  color: colors,-->
+<!--                  tooltip: {-->
+<!--                    trigger: 'axis',-->
+<!--                    axisPointer: {-->
+<!--                      type: 'cross'-->
+<!--                    }-->
+<!--                  },-->
+<!--                  grid: {-->
+<!--                    right: '20%'-->
+<!--                  },-->
+<!--                  toolbox: {-->
+<!--                    feature: {-->
+<!--                      dataZoom:{-->
+<!--                        yAxisIndex: 'none'-->
+<!--                      },-->
+<!--                      dataView: { show: true, readOnly: false },-->
+<!--                      restore: { show: true },-->
+<!--                      saveAsImage: { show: true }-->
+<!--                    }-->
+<!--                  },-->
+<!--                  legend: {-->
+<!--                    data: col_name-->
+<!--                  },-->
+<!--                  dataZoom: [-->
+<!--                    {-->
+<!--                      show: true,-->
+<!--                      realtime: true,-->
+<!--                      start: 30,-->
+<!--                      end: 70,-->
+<!--                      xAxisIndex: [0, 1]-->
+<!--                    },-->
+<!--                    {-->
+<!--                      type: 'inside',-->
+<!--                      realtime: true,-->
+<!--                      start: 30,-->
+<!--                      end: 70,-->
+<!--                      xAxisIndex: [0, 1]-->
+<!--                    }-->
+<!--                  ],-->
+<!--                  xAxis: [-->
+<!--                    {-->
+<!--                      type: 'category',-->
+<!--                      axisTick: {-->
+<!--                        alignWithLabel: true-->
+<!--                      },-->
+<!--                      data: pho_date-->
+<!--                    }-->
+<!--                  ],-->
+<!--                  yAxis: [-->
+<!--                    {-->
+<!--                      type: 'value',-->
+<!--                      name: 'QTY',-->
+<!--                      position: 'right',-->
+<!--                      alignTicks: true,-->
+<!--                      axisLine: {-->
+<!--                        show: true,-->
+<!--                        lineStyle: {-->
+<!--                          color: colors[0]-->
+<!--                        }-->
+<!--                      },-->
+<!--                      axisLabel: {-->
+<!--                        formatter: '{value}'-->
+<!--                      }-->
+<!--                    },-->
+<!--                    {-->
+<!--                      type: 'value',-->
+<!--                      name: 'xACC',-->
+<!--                      position: 'left',-->
+<!--                      alignTicks: true,-->
+<!--                      axisLine: {-->
+<!--                        show: true,-->
+<!--                        lineStyle: {-->
+<!--                          color: colors[3]-->
+<!--                        }-->
+<!--                      },-->
+<!--                      axisLabel: {-->
+<!--                        formatter: '{value}'-->
+<!--                      }-->
+<!--                    }-->
+<!--                  ],-->
+<!--                  series: [-->
+<!--                    {-->
+<!--                      name: col_name[0],-->
+<!--                      type: 'bar',-->
+<!--                      data: bar[0]-->
+<!--                    },-->
+<!--                    {-->
+<!--                      name: col_name[1],-->
+<!--                      type: 'bar',-->
+<!--                      data: bar[1]-->
+<!--                    },-->
+<!--                    {-->
+<!--                      name: col_name[2],-->
+<!--                      type: 'bar',-->
+<!--                      data: bar[2]-->
+<!--                    },-->
+<!--                    {-->
+<!--                      name: col_name[3],-->
+<!--                      type: 'line',-->
+<!--                      yAxisIndex: 1,-->
+<!--                      data: line[0]-->
+<!--                    },-->
+<!--                    {-->
+<!--                      name: col_name[4],-->
+<!--                      type: 'line',-->
+<!--                      yAxisIndex: 1,-->
+<!--                      data: line[1]-->
+<!--                    }-->
+<!--                  ]-->
+<!--            };-->
+<!--            myChart.setOption(option);-->
+<!--        </script>-->
+<!--    </div>-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        var flag = $('#flag').val();
+        if (flag == 'Magnetic'){
+            document.getElementById('XTI Degradation').style.display = "none";
+            document.getElementById('Test').style.display = "none";
+
+        } else if (flag == 'XTI Degradation'){
+            document.getElementById("Magnetic").style.display = "none";
+            document.getElementById('Test').style.display = "none";
+        } else if (flag == 'Test'){
+
+            document.getElementById("Magnetic").style.display = "none";
+            document.getElementById('XTI Degradation').style.display = "none";
+            alert('NO FILES FOUND!');
+
+        } else if (flag == 'Test_no_para'){
+
+            document.getElementById("Magnetic").style.display = "none";
+            document.getElementById('XTI Degradation').style.display = "none";
+            alert('NO PARAMETER FOUND!');
+
+        }
+    })
+</script>
 {% endblock %}
 

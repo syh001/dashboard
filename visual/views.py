@@ -1,3 +1,5 @@
+import re
+import datetime
 from django.http import HttpResponse
 from sqlalchemy import create_engine
 import pandas as pd
@@ -21,12 +23,11 @@ from django.http import HttpResponse
 root_path = './'
 sourth_path = 'C:/Users/sas053/Desktop/dataset'
 target_path = 'C:/Users/sas053/Desktop/dataset'
-file_name = 'test.csv'
-file_name_save = 'return_test.xlsx'
+
 
 global DF
-DF = pd.read_csv('C:/Users/1000300246/Desktop/HDDMagnetic.csv')
-
+DF = pd.read_csv('C:/Users/1000300246/Desktop/test_folder/HDD_Magnetic.csv')
+DF.sort_values(by=['new_Date'], ascending=True, inplace=True)
 
 def test_read_speed():
     since = time.time()
@@ -98,7 +99,7 @@ def index(request):
         mselect_dict[key]['select'] = value
         mselect_dict[key]['options'] = get_distinct_list(df, value)  # 以后可以后端通过列表为每个多选控件传递备选项
         dic[key] = list(set(get_distinct_list(df, value).tolist()))
-    print('mselect_dict', mselect_dict)
+    # print('mselect_dict', mselect_dict)
     context = {
         'mselect_dict': mselect_dict,
         'D_MULTI_SELECT': D_MULTI_SELECT,
@@ -269,92 +270,97 @@ def choose_path_file():
             print("Filename:", filename)
 
 
-def response_as_json(data):
-    json_str = json.dumps(data)
-    response = HttpResponse(
-        json_str,
-        content_type="application/json",
-    )
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
-
-
-def json_response(data, code=200):
-    data = {
-        "code": code,
-        "msg": "success",
-        "data": data,
-    }
-    return response_as_json(data)
-
-
-def json_error(error_string="error", code=500, **kwargs):
-    data = {
-        "code": code,
-        "msg": error_string,
-        "data": {}
-    }
-    data.update(kwargs)
-    return response_as_json(data)
-
-
-JsonResponse = json_response
-JsonError = json_error
-
-
-def bar_base() -> Bar:
-    c = (
-        Bar()
-        .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
-        .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
-        .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
-        .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-        .dump_options_with_quotes()
-    )
-    return c
-
 
 def get_process_name(request):
-    product_choose = request.POST.get("product_choose")
-    model_choose = request.POST.get("model_choose")
-    df_pho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'PHO')]
-    df_pho = df_pho.dropna()
-    df_tho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'THO')]
-    df_tho = df_tho.dropna()
-    pho_qty = [np.array(df_pho['QTY_6400']).tolist(), np.array(df_pho['MCW_MD']).tolist(),
-               np.array(df_pho['Resi_pACC']).tolist()]
+    file_dir = 'C:/Users/1000300246/Desktop/test_folder'
 
-    pho_line = [np.array(df_pho['Resi_OWP_MD_Post']).tolist(), np.array(df_pho['Resi_FinalSER']).tolist()]
-
-    tho_qty = [np.array(df_tho['QTY_6400']).tolist(), np.array(df_tho['MCW_MD']).tolist(),
-               np.array(df_tho['Resi_pACC']).tolist()]
-    tho_line = [np.array(df_tho['Resi_OWP_MD_Post']).tolist(), np.array(df_tho['Resi_FinalSER']).tolist()]
-    col_name = ['QTY_6400', 'MCW_MD', 'Resi_pACC', 'Resi_OWP_MD_Post', 'Resi_FinalSER']
+    group_ls = []
+    file = ''
+    flag = ''
+    dict = {}
+    #接收参数
+    independent = request.POST.get("independent")
+    parameter = request.POST.get("dependent")
+    #按什么分组
+    if independent == 'Magnetic':
+        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+        flag = 'Magnetic'
+    elif independent == 'YC':
+        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+        flag = 'Test'
+    elif independent == 'XTI Degradation':
+        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+        flag = 'XTI Degradation'
+    else:
+        flag = 'Test'
+    #确认文件
+    for f in os.listdir(file_dir):
+        obj = re.search(independent, f)
+        if obj:
+            file = obj.string
+            break
+    if file != '':
+        file_name = file_dir + '/' + file
+        df = pd.read_csv(file_name)
+        #确认参数
+        para_value = ''
+        for col in df.columns:
+            if parameter in col:
+                para_value = col
+                # break
+        print('参数是', para_value)
+        if para_value != '':
+            # by date 分组
+            df_list = []
+            for group in group_ls:
+                transposed_df = df.pivot_table(index='Date', columns=group, values=para_value, aggfunc='mean')
+                transposed_df.reset_index(inplace=True)
+                df_list.append(transposed_df)
+            all = df_list[0]
+            for i in range(1, len(df_list)):
+                all = pd.merge(all, df_list[i], left_on='Date', right_on='Date')
+            all.replace({np.nan: '-'}, inplace=True)
+            # 按照时间排序，确保画图时的时间轴是正确的
+            all['new_date'] = 0
+            for i, it in all.iterrows():
+                obj = all.loc[i, 'Date']
+                obj_ = datetime.datetime.strptime(obj, "%m/%d/%Y")
+                all.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
+            all.sort_values(by=['new_date'], ascending=True, inplace=True)
+            #将所有分组以字典的形式传到前端画图
+            for i in all.columns:
+                dict[i] = np.array(all[i]).tolist()
+        else:
+            flag = 'Test_no_para'
+    # df_pho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'PHO')]
+    # df_pho = df_pho.dropna()
+    # df_tho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'THO')]
+    # df_tho = df_tho.dropna()
+    # pho_qty = [np.array(df_pho['QTY_6400']).tolist(), np.array(df_pho['MCW_MD']).tolist(),
+    #            np.array(df_pho['Resi_pACC']).tolist()]
+    # pho_line = [np.array(df_pho['Resi_OWP_MD_Post']).tolist(), np.array(df_pho['Resi_FinalSER']).tolist()]
+    # tho_qty = [np.array(df_tho['QTY_6400']).tolist(), np.array(df_tho['MCW_MD']).tolist(),
+    #            np.array(df_tho['Resi_pACC']).tolist()]
+    # tho_line = [np.array(df_tho['Resi_OWP_MD_Post']).tolist(), np.array(df_tho['Resi_FinalSER']).tolist()]
+    # col_name = ['QTY_6400', 'MCW_MD', 'Resi_pACC', 'Resi_OWP_MD_Post', 'Resi_FinalSER']
+    # print(dict)
+    # print('filename', file_name)
+    # print('para', para_value)
+    print('flag', flag)
     lis1 = ['a', 'b', 'c', 'd', 'Fri', 'Sat', 'Sun']
     lis2 = [150, 230, 224, 218, 135, 147, 260]
-
-    # col_name = ['Evaporation', 'Precipitation', 'Temperature', 'temp']
-    # x_date = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    # bar_1 =[
-    #     2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
-    #   ]
-    # bar_2 =[
-    #     2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-    #   ]
-    # line_1 =[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-    # line_2 =[20.3, 23.4, 23.0, 16.5, 12.0, 6.2, 2.0, 2.2, 3.3, 4.5, 6.3, 10.2]
     return render(request, './visual/plot.html', {
-        "pho_qty": pho_qty,
-        "pho_line": pho_line,
-        "tho_qty": tho_qty,
-        "tho_line": tho_line,
-        "col_name": col_name,
-        "pho_date": np.array(df_pho['Date']).tolist(),
-        "tho_date": np.array(df_tho['Date']).tolist(),
-        "lis1" : lis1,
-        "lis2" : lis2,
-
-
-        "product_choose": product_choose,
-        "model_choose": model_choose
+        # "pho_qty": pho_qty,
+        # "pho_line": pho_line,
+        # "tho_qty": tho_qty,
+        # "tho_line": tho_line,
+        # "col_name": col_name,
+        # "pho_date": np.array(df_pho['Date']).tolist(),
+        # "tho_date": np.array(df_tho['Date']).tolist(),
+        "lis1": lis1,
+        "lis2": lis2,
+        "independent": independent,
+        "parameter": parameter,
+        "dict" : dict,
+        "flag" : flag
     })
