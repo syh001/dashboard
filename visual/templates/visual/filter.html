@@ -65,14 +65,14 @@
                 <div class="hidden content">确认</div>
             </div>
         </div>
-
+        <div class="fields"></div>
         <div class="row">
             <form name="process_form" action="/visual/get_process_name" method="post" style="height:438px;">
                 {% csrf_token %}
                 <div class="field">
                     <div class="fields">
                         <div class="fifteen wide field">
-                            <h3 class="ui header" id="choose1">First choose</h3>
+                            <h3 class="ui header" id="choose1">Process</h3>
                             <select id="independent" name="independent">
                                 <option value="" disabled selected hidden>{{independent}}</option>
                                 <option value="YC"> YC </option>
@@ -85,7 +85,7 @@
                                 <option value="Writer degradation"> Writer degradation </option>
                                 <option value="Write-short"> Write-short </option>
                             </select>
-                            <h3 class="ui header" id="choose2">Second choose</h3>
+                            <h3 class="ui header" id="choose2">Parameter</h3>
                             <div class="fields"></div>
                             <select id="dependent" name="dependent">
                                 <option value="">{{parameter}}</option>
@@ -119,11 +119,11 @@
                     <button class="ui positive basic button">画图</button>
                 </div>
             </form>
-            <div class="row" style="text-align: center;">
-                <a href="/visual/index">
-                    <button class="ui secondary basic button">重现选择</button>
-                </a>
-            </div>
+<!--            <div class="row" style="text-align: center;">-->
+<!--                <a href="/visual/index">-->
+<!--                    <button class="ui secondary basic button">重现选择</button>-->
+<!--                </a>-->
+<!--            </div>-->
         </div>
     </div>
 </div>
