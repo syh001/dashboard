@@ -281,6 +281,8 @@ def get_process_name(request):
     #接收参数
     independent = request.POST.get("independent")
     parameter = request.POST.get("dependent")
+    by = request.POST.get("by")
+    print('by---------', by)
     #按什么分组
     if independent == 'Magnetic':
         group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
@@ -313,25 +315,27 @@ def get_process_name(request):
             # by date 分组
             df_list = []
             for group in group_ls:
-                transposed_df = df.pivot_table(index='Date', columns=group, values=para_value, aggfunc='mean')
+                transposed_df = df.pivot_table(index=by, columns=group, values=para_value, aggfunc='mean')
                 transposed_df.reset_index(inplace=True)
                 df_list.append(transposed_df)
             all = df_list[0]
             for i in range(1, len(df_list)):
-                all = pd.merge(all, df_list[i], left_on='Date', right_on='Date')
+                all = pd.merge(all, df_list[i], left_on=by, right_on=by)
             all.replace({np.nan: '-'}, inplace=True)
-            # 按照时间排序，确保画图时的时间轴是正确的
-            all['new_date'] = 0
-            for i, it in all.iterrows():
-                obj = all.loc[i, 'Date']
-                obj_ = datetime.datetime.strptime(obj, "%m/%d/%Y")
-                all.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
-            all.sort_values(by=['new_date'], ascending=True, inplace=True)
+            if by == 'Date':
+                # 按照时间排序，确保画图时的时间轴是正确的
+                all['new_date'] = 0
+                for i, it in all.iterrows():
+                    obj = all.loc[i, 'Date']
+                    obj_ = datetime.datetime.strptime(obj, "%m/%d/%Y")
+                    all.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
+                all.sort_values(by=['new_date'], ascending=True, inplace=True)
             #将所有分组以字典的形式传到前端画图
             for i in all.columns:
                 dict[i] = np.array(all[i]).tolist()
         else:
             flag = 'Test_no_para'
+    print(dict)
     # df_pho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'PHO')]
     # df_pho = df_pho.dropna()
     # df_tho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'THO')]
@@ -346,7 +350,7 @@ def get_process_name(request):
     # print(dict)
     # print('filename', file_name)
     # print('para', para_value)
-    print('flag', flag)
+    print('ffff', flag)
     lis1 = ['a', 'b', 'c', 'd', 'Fri', 'Sat', 'Sun']
     lis2 = [150, 230, 224, 218, 135, 147, 260]
     return render(request, './visual/plot.html', {
@@ -362,5 +366,6 @@ def get_process_name(request):
         "independent": independent,
         "parameter": parameter,
         "dict" : dict,
-        "flag" : flag
+        "flag" : flag,
+        "by" : by
     })

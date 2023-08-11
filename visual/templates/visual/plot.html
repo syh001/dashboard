@@ -37,9 +37,9 @@
         <div id="Magnetic" style="width: 1100px;height:500px;"></div>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="text/javascript">
-            var myChart=echarts.init(document.getElementById('Magnetic'));
-            dict = {{dict|safe}};
 
+            var myChart=echarts.init(document.getElementById('Magnetic'));
+            var dict = {{dict|safe}};
             var option = {
                   title: {
                     text: 'Line Plot'
@@ -90,7 +90,7 @@
                     axisTick: {
                         alignWithLabel: true
                     },
-                    data: dict['Date']
+                    data: dict['WAFERNUM']
                   },
                   yAxis: {
                     type: 'value',
@@ -212,7 +212,6 @@
         <script type="text/javascript">
             var myChart=echarts.init(document.getElementById('XTI Degradation'));
             dict = {{dict|safe}};
-
             var option = {
                   title: {
                     text: 'Line Plot'
@@ -263,7 +262,7 @@
                     axisTick: {
                         alignWithLabel: true
                     },
-                    data: dict['Date']
+                    data: dict['WAFERNUM']
                   },
                   yAxis: {
                     type: 'value',
