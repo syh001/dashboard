@@ -1,70 +1,72 @@
+
+
 <div class="ui container">
     <div class="ui form">
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="ui buttons">
-                <input class="ui blue button" type='button' id='show_data' value="数据展示"/>
-            </div>
-        </form>
-        <div class="ui divider"></div>
-        <div action="" method="post">
-            <!-- 在Django所有的 POST 表单元素时，需要加上下方的csrf_token tag，主要是安全方面的机制，本例后续使用AJAX方法，这里的POST class和token都不生效 -->
-            {% csrf_token %}
-            <h3 class="ui header" id="analysis">分析维度</h3>
-            <div class="field">
-                <div class="fields"></div>
-                <div class="fields">
+<!--        <form action="" method="post">-->
+<!--            {% csrf_token %}-->
+<!--            <div class="ui buttons">-->
+<!--                <input class="ui blue button" type='button' id='show_data' value="数据展示"/>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--        <div class="ui divider"></div>-->
+<!--        <div action="" method="post">-->
+<!--            &lt;!&ndash; 在Django所有的 POST 表单元素时，需要加上下方的csrf_token tag，主要是安全方面的机制，本例后续使用AJAX方法，这里的POST class和token都不生效 &ndash;&gt;-->
+<!--            {% csrf_token %}-->
+<!--            <h3 class="ui header" id="analysis">分析维度</h3>-->
+<!--            <div class="field">-->
+<!--                <div class="fields"></div>-->
+<!--                <div class="fields">-->
 
-                    <div class="fifteen wide field">
-                        <select name="Feature1" id="Feature1" class="ui fluid search dropdown">
-                            {% for key, value in mselect_dict.items %}
-                                {% if value.select == 'Group' %}
-                                    <option value="{{ value.select }}" selected>{{ key }}</option>
-                                {% else %}
-                                    <option value="{{ value.select }}">{{ key }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="field">
-                <div class="fields"></div>
-                <div class="fields">
-                    <div class="fifteen wide field">
-                        <select name="Feature2" id="Feature2" class="ui fluid search dropdown">
-                            {% for key, value in mselect_dict.items %}
-                                {% if value.select == 'hddsn' %}
-                                    <option value="{{ value.select }}" selected>{{ key }}</option>
-                                {% else %}
-                                    <option value="{{ value.select }}">{{ key }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!-- ui floating dropdown labeled search icon button -->
-            <h3 class="ui header" id="asistance">辅助维度</h3>
-            <div class="field">
-                <div class="fields"></div>
-                <div class="fields">
-                    <div class="fifteen wide field">
-                        <select name="Feature_opt" id="Feature_opt" class="ui fluid multiple search dropdown">
-                            <!-- 默认hidden显示为Feature Selection -->
-                            <option value="">Feature Selection</option>
-                            {% for key, value in mselect_dict.items %}
-                                <option value="{{ value.select }}">{{ key }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="ui blue animated button" tabindex="0" id='AJAX_get'>
-                <div class="visible content">维度选择</div>
-                <div class="hidden content">确认</div>
-            </div>
-        </div>
+<!--                    <div class="fifteen wide field">-->
+<!--                        <select name="Feature1" id="Feature1" class="ui fluid search dropdown">-->
+<!--                            {% for key, value in mselect_dict.items %}-->
+<!--                                {% if value.select == 'Group' %}-->
+<!--                                    <option value="{{ value.select }}" selected>{{ key }}</option>-->
+<!--                                {% else %}-->
+<!--                                    <option value="{{ value.select }}">{{ key }}</option>-->
+<!--                                {% endif %}-->
+<!--                            {% endfor %}-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="field">-->
+<!--                <div class="fields"></div>-->
+<!--                <div class="fields">-->
+<!--                    <div class="fifteen wide field">-->
+<!--                        <select name="Feature2" id="Feature2" class="ui fluid search dropdown">-->
+<!--                            {% for key, value in mselect_dict.items %}-->
+<!--                                {% if value.select == 'hddsn' %}-->
+<!--                                    <option value="{{ value.select }}" selected>{{ key }}</option>-->
+<!--                                {% else %}-->
+<!--                                    <option value="{{ value.select }}">{{ key }}</option>-->
+<!--                                {% endif %}-->
+<!--                            {% endfor %}-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; ui floating dropdown labeled search icon button &ndash;&gt;-->
+<!--            <h3 class="ui header" id="asistance">辅助维度</h3>-->
+<!--            <div class="field">-->
+<!--                <div class="fields"></div>-->
+<!--                <div class="fields">-->
+<!--                    <div class="fifteen wide field">-->
+<!--                        <select name="Feature_opt" id="Feature_opt" class="ui fluid multiple search dropdown">-->
+<!--                            &lt;!&ndash; 默认hidden显示为Feature Selection &ndash;&gt;-->
+<!--                            <option value="">Feature Selection</option>-->
+<!--                            {% for key, value in mselect_dict.items %}-->
+<!--                                <option value="{{ value.select }}">{{ key }}</option>-->
+<!--                            {% endfor %}-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="ui blue animated button" tabindex="0" id='AJAX_get'>-->
+<!--                <div class="visible content">维度选择</div>-->
+<!--                <div class="hidden content">确认</div>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="fields"></div>
         <div class="row">
             <form name="process_form" action="/visual/get_process_name" method="post" style="height:438px;">
@@ -72,7 +74,7 @@
                 <div class="field">
                     <div class="fields">
                         <div class="fifteen wide field">
-                            <h3 class="ui header" id="choose1">Process</h3>
+                            <h5 class="ui header" id="choose1">Category</h5>
                             <select id="independent" name="independent">
                                 <option value="" disabled selected hidden>{{independent}}</option>
                                 <option value="YC"> YC </option>
@@ -85,8 +87,8 @@
                                 <option value="Writer degradation"> Writer degradation </option>
                                 <option value="Write-short"> Write-short </option>
                             </select>
-                            <h3 class="ui header" id="choose2">Parameter</h3>
-                            <div class="fields"></div>
+                            <h5 class="ui header" id="choose2">Parameter</h5>
+<!--                            <div class="fields"></div>-->
                             <select id="dependent" name="dependent">
                                 <option value="">{{parameter}}</option>
                                 <option value="Yield"> Yield </option>
@@ -112,26 +114,59 @@
                                 <option value="Delta OW"> Delta OW </option>
                                 <option value="UEC (S5W, Func, SRST, Fin & Featuring)"> UEC (S5W, Func, SRST, Fin & Featuring) </option>
                             </select>
-                            <h3 class="ui header" id="choose3">By</h3>
-                            <div class="fields"></div>
+                            <h5 class="ui header" id="choose3">By</h5>
+<!--                            <div class="fields"></div>-->
                             <select id="by" name="by">
-                                <option value="" disabled selected hidden>{{by}}</option>
+                                <option value="" disabled selected hidden>{{by_}}</option>
                                 <option value="Date">Date</option>
                                 <option value="WAFERNUM">Wafer</option>
                             </select>
+                            <h3 class="ui header" id="">Group</h3>
+                            <h5>Product</h5>
+                            <select name="product" id="product">
+                                <option value="">{{product}}</option>
+                            </select>
+                            <h5>HDD_model(Capacity)</h5>
+                            <select name="hddmodel" id="hddmodel">
+                                <option value="">{{hddmodel}}</option>
+                            </select>
+                            <h5>Wafer_EC</h5>
+                            <select name="wec" id="wec">
+                                <option value="">{{wec}}</option>
+                            </select>
+                            <h5>Head_site</h5>
+                            <select name="hsite" id="hsite">
+                                <option value="">{{hsite}}</option>
+                            </select>
+                            <h5>Disk</h5>
+                            <select name="disk" id="disk">
+                                <option value="">{{disk}}</option>
+                            </select>
+                            <h5>Grade</h5>
+                            <select name="grade" id="grade">
+                                <option value="">{{grade}}</option>
+                            </select>
+
+
+
+
                         </div>
                     </div>
                 </div>
+
                 <div class="row" style="text-align: center;margin-top: 30px;">
                     <button class="ui positive basic button">画图</button>
                 </div>
             </form>
-<!--            <div class="row" style="text-align: center;">-->
-<!--                <a href="/visual/index">-->
-<!--                    <button class="ui secondary basic button">重现选择</button>-->
-<!--                </a>-->
-<!--            </div>-->
+
         </div>
+<!--        <div class="fields"></div>-->
+<!--        <div class="row" style="text-align: center;margin-top: 120px;">-->
+<!--            <a href="/visual/index">-->
+<!--                <button class="ui secondary basic button">重新选择</button>-->
+<!--            </a>-->
+<!--        </div>-->
+
     </div>
 </div>
 
@@ -254,4 +289,182 @@
       });
     });
 </script>
+
+
+<script>
+    var data = [
+        {
+            'name' : 'LDS',
+            'children' : [
+                {
+                    'name' : '22TB CMR',
+                    'children' : [
+                        {
+                            'name' : 'GD2b',
+                            'children' : [
+                                {
+                                    'name' : 'PHO',
+                                    'children' : [
+                                        {
+                                            'name' : 'SL6a',
+                                            'children' : [{'name' : 'U1'},
+                                                         {'name' : 'U2'}]
+                                        }
+                                    ]
+
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            'name' : 'PCM',
+            'children' : [
+                {
+                    'name' : '18TB CMR',
+                    'children' : [
+                        {
+                            'name' : 'FC5',
+                            'children' : [
+                                {
+                                    'name' : 'THO',
+                                    'children' : [
+                                        {
+                                            'name' : 'SC3h',
+                                            'children' : [{'name' : 'G0'},
+                                                         {'name' : 'G4'}]
+                                        },
+                                        {
+                                            'name' : 'SMD+NOM',
+                                            'children' : [{'name' : 'G1'}]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
+    var product = document.getElementById("product");
+    var hddmodel = document.getElementById("hddmodel");
+    var wec = document.getElementById("wec");
+    var hsite = document.getElementById("hsite");
+    var disk = document.getElementById("disk");
+    var grade = document.getElementById("grade");
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+        var option = document.createElement("option");
+        option.innerHTML = data[i].name;
+        option.value = data[i].name;
+        frag.appendChild(option);
+    }
+    product.appendChild(frag);
+
+    var hddmodelArr = [];
+    product.onchange = function () {
+<!--        hddmodel.innerHTML="<option value=\"\">-&#45;&#45;choose hddmodel-&#45;&#45;</option>"-->
+<!--        wec.innerHTML="<option value=\"\">-&#45;&#45;choose wafer ec-&#45;&#45;</option>"-->
+<!--        hsite.innerHTML="<option value=\"\">-&#45;&#45;choose head site-&#45;&#45;</option>"-->
+<!--        disk.innerHTML="<option value=\"\">-&#45;&#45;choose disk-&#45;&#45;</option>"-->
+<!--        grade.innerHTML="<option value=\"\">-&#45;&#45;choose grade-&#45;&#45;</option>"-->
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].name == this.value) {
+                hddmodelArr = data[i].children;
+                break;
+            }
+        }
+        for (var j = 0; j < hddmodelArr.length; j++) {
+            var option = document.createElement("option");
+            option.innerHTML = hddmodelArr[j].name;
+            option.value = hddmodelArr[j].name;
+            frag.appendChild(option);
+        }
+        hddmodel.appendChild(frag);
+    }
+
+    var wecArr = [];
+    hddmodel.onchange = function () {
+<!--        wec.innerHTML="<option value=\"\">-&#45;&#45;choose wafer ec-&#45;&#45;</option>"-->
+<!--        hsite.innerHTML="<option value=\"\">-&#45;&#45;choose head site-&#45;&#45;</option>"-->
+<!--        disk.innerHTML="<option value=\"\">-&#45;&#45;choose disk-&#45;&#45;</option>"-->
+<!--        grade.innerHTML="<option value=\"\">-&#45;&#45;choose grade-&#45;&#45;</option>"-->
+        for (var i = 0; i < hddmodelArr.length; i++) {
+            if (hddmodelArr[i].name == this.value) {
+                wecArr = hddmodelArr[i].children;
+                break;
+            }
+        }
+        for (var j = 0; j < wecArr.length; j++) {
+            var option = document.createElement("option");
+            option.innerHTML = wecArr[j].name;
+            option.value = wecArr[j].name;
+            frag.appendChild(option);
+        }
+        wec.appendChild(frag);
+    }
+
+    var hsiteArr = [];
+    wec.onchange = function() {
+<!--        hsite.innerHTML="<option value=\"\">-&#45;&#45;choose head site-&#45;&#45;</option>"-->
+<!--        disk.innerHTML="<option value=\"\">-&#45;&#45;choose disk-&#45;&#45;</option>"-->
+<!--        grade.innerHTML="<option value=\"\">-&#45;&#45;choose grade-&#45;&#45;</option>"-->
+        for (var i = 0; i < wecArr.length; i++) {
+            if (wecArr[i].name == this.value) {
+                hsiteArr = wecArr[i].children;
+                break;
+            }
+        }
+        for (var j = 0; j < hsiteArr.length; j++) {
+            var option = document.createElement("option");
+            option.innerHTML = hsiteArr[j].name;
+            option.value = hsiteArr[j].name;
+            frag.appendChild(option);
+        }
+        hsite.appendChild(frag);
+    }
+
+    var diskArr = [];
+    hsite.onchange = function() {
+<!--        disk.innerHTML="<option value=\"\">-&#45;&#45;choose disk-&#45;&#45;</option>"-->
+<!--        grade.innerHTML="<option value=\"\">-&#45;&#45;choose grade-&#45;&#45;</option>"-->
+        for (var i = 0; i < hsiteArr.length; i++) {
+            if (hsiteArr[i].name == this.value) {
+                diskArr = hsiteArr[i].children;
+                break;
+            }
+        }
+        for (var j = 0; j < diskArr.length; j++) {
+            var option = document.createElement("option");
+            option.innerHTML = diskArr[j].name;
+            option.value = diskArr[j].name;
+            frag.appendChild(option);
+        }
+        disk.appendChild(frag);
+    }
+
+    var gradeArr = [];
+    disk.onchange = function() {
+<!--        grade.innerHTML="<option value=\"\">-&#45;&#45;choose grade-&#45;&#45;</option>"-->
+        for (var i = 0; i < diskArr.length; i++) {
+            if (diskArr[i].name == this.value) {
+                gradeArr = diskArr[i].children;
+                break;
+            }
+        }
+        for (var j = 0; j < gradeArr.length; j++) {
+            var option = document.createElement("option");
+            option.innerHTML = gradeArr[j].name;
+            option.value = gradeArr[j].name;
+            frag.appendChild(option);
+        }
+        grade.appendChild(frag);
+    }
+</script>
+
+
+
 

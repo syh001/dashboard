@@ -32,14 +32,90 @@
          </script>
     </div>
 
+    <div>
+        <div id="single_plot" style="width: 1100px;height:500px;"></div>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script type="text/javascript">
+            var myChart=echarts.init(document.getElementById('single_plot'));
+
+<!--            x = {{x|safe}};-->
+            dic_try = {{dic_try|safe}};
+            var option = {
+              title: {
+                text: 'Stacked Line'
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                orient: "horizontal",
+                data: [dic_try['para']]
+              },
+              grid: {
+                right: '20%',
+                containLabel: true
+              },
+              toolbox: {
+                feature: {
+                  dataZoom:{
+                    yAxisIndex: 'none'
+                  },
+                  dataView: { show: true, readOnly: false },
+                  restore: { show: true },
+                  saveAsImage: { show: true }
+                }
+              },
+              dataZoom: [
+                {
+                  show: true,
+                  realtime: true,
+                  start: 30,
+                  end: 70,
+                  xAxisIndex: [0, 1]
+                },
+                {
+                  type: 'inside',
+                  realtime: true,
+                  start: 30,
+                  end: 70,
+                  xAxisIndex: [0, 1]
+                }
+              ],
+              xAxis: {
+                type: 'category',
+                axisTick: {
+                    alignWithLabel: true
+                },
+                data: dic_try['x']
+              },
+              yAxis: {
+                type: 'value'
+              },
+              series: [
+                {
+                  name: dic_try['para'],
+                  type: 'line',
+                  data: dic_try['y']
+                }
+<!--                {-->
+<!--                  name: 'MNB',-->
+<!--                  type: 'line',-->
+<!--                  data: y-->
+<!--                }-->
+              ]
+            };
+            myChart.setOption(option);
+         </script>
+    </div>
+
 
     <div>
         <div id="Magnetic" style="width: 1100px;height:500px;"></div>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="text/javascript">
-
+            dict = {{dict|safe}};
             var myChart=echarts.init(document.getElementById('Magnetic'));
-            var dict = {{dict|safe}};
+
             var option = {
                   title: {
                     text: 'Line Plot'
@@ -378,6 +454,150 @@
             myChart.setOption(option);
         </script>
     </div>
+    <div>
+        <div id="scatter_fit" style="width: 1100px;height:500px;"></div>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script type="text/javascript">
+            var myChart=echarts.init(document.getElementById('scatter_fit'));
+            trans_dict = {{trans_dict|safe}};
+            var option = {
+                color : ['green', 'red'],
+                legend: {
+                    data:['scatter', 'fit-line']
+                },
+               tooltip : {
+                    trigger: 'axis',
+                    axisPointer: {
+                    type: 'cross',
+                    animation: false,
+                    }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+<!--                dataZoom: [-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    xAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    type: 'inside',-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    xAxisIndex: [0, 1]-->
+
+<!--                  },-->
+<!--                  {-->
+<!--                    type: 'inside',-->
+<!--                    orient: 'vertical'-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    yAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    type: 'inside',-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    yAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    type: 'inside',-->
+<!--                    orient: 'horizontal'-->
+<!--                  }-->
+<!--                ],-->
+                dataZoom: [
+                    {
+                      type: 'slider',
+                      xAxisIndex: 0,
+                      filterMode: 'none'
+                    },
+                    {
+                      type: 'slider',
+                      yAxisIndex: 0,
+                      filterMode: 'none'
+                    },
+                    {
+                      type: 'inside',
+                      xAxisIndex: 0,
+                      filterMode: 'none'
+                    },
+                    {
+                      type: 'inside',
+                      yAxisIndex: 0,
+                      filterMode: 'none'
+                    }
+                ],
+                grid: {
+                    top: 70,
+                    bottom: 50,
+                    containLabel: true
+                },
+
+                 xAxis: {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    name:trans_dict['by'],
+                    nameTextStyle:{
+                    color:'#333'
+                    },
+                    boundaryGap: true
+                },
+                yAxis:{
+                    name:trans_dict['parameter'],
+                    type: 'value',
+                    nameTextStyle:{
+                        color:'#333'
+                    },
+<!--                    min: 50,-->
+<!--                    max: 70-->
+
+                },
+                series: [{
+                    name:'scatter',
+                    symbolSize: 5,
+                    data: trans_dict['scatter_data'],
+                    type: 'scatter',
+                    smooth:true,
+                    showSymbol: false,
+                    barGap: 0
+                },
+                {
+                    name:'fit-line',
+                    symbolSize: 5,
+                    data: trans_dict['fit_aver_data'],
+                    type: 'line',
+                    smooth:true,
+                    showSymbol:false,
+                    barGap: 0
+                }
+                ]
+            };
+            myChart.setOption(option);
+         </script>
+    </div>
+
 <!--    <div>-->
 <!--        <div id="bar_line" style="width: 1100px;height:500px;"></div>-->
 <!--        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>-->
@@ -513,21 +733,43 @@
         if (flag == 'Magnetic'){
             document.getElementById('XTI Degradation').style.display = "none";
             document.getElementById('Test').style.display = "none";
+            document.getElementById('single_plot').style.display = "none";
+            document.getElementById('scatter_fit').style.display = "none";
 
         } else if (flag == 'XTI Degradation'){
             document.getElementById("Magnetic").style.display = "none";
             document.getElementById('Test').style.display = "none";
+            document.getElementById('single_plot').style.display = "none";
+            document.getElementById('scatter_fit').style.display = "none";
         } else if (flag == 'Test'){
 
             document.getElementById("Magnetic").style.display = "none";
             document.getElementById('XTI Degradation').style.display = "none";
+            document.getElementById('single_plot').style.display = "none";
+            document.getElementById('scatter_fit').style.display = "none";
             alert('NO FILES FOUND!');
 
         } else if (flag == 'Test_no_para'){
 
             document.getElementById("Magnetic").style.display = "none";
             document.getElementById('XTI Degradation').style.display = "none";
+            document.getElementById('single_plot').style.display = "none";
+            document.getElementById('scatter_fit').style.display = "none";
             alert('NO PARAMETER FOUND!');
+
+        } else if (flag == 'singe_plot'){
+
+            document.getElementById("Magnetic").style.display = "none";
+            document.getElementById('XTI Degradation').style.display = "none";
+            document.getElementById('Test').style.display = "none";
+            document.getElementById('scatter_fit').style.display = "none";
+
+        } else if (flag == 'scatter_fit'){
+
+            document.getElementById("Magnetic").style.display = "none";
+            document.getElementById('XTI Degradation').style.display = "none";
+            document.getElementById('Test').style.display = "none";
+            document.getElementById('single_plot').style.display = "none";
 
         }
     })

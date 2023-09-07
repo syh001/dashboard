@@ -1,5 +1,7 @@
 import re
 import datetime
+
+import csaps
 from django.http import HttpResponse
 from sqlalchemy import create_engine
 import pandas as pd
@@ -21,13 +23,13 @@ from django.http import HttpResponse
 
 # from rest_framework.views import APIView
 root_path = './'
-sourth_path = 'C:/Users/sas053/Desktop/dataset'
+source_path = 'C:/Users/1000300246/Desktop/test_folder/'
 target_path = 'C:/Users/sas053/Desktop/dataset'
 
 
 global DF
 DF = pd.read_csv('C:/Users/1000300246/Desktop/test_folder/HDD_Magnetic.csv')
-DF.sort_values(by=['new_Date'], ascending=True, inplace=True)
+# DF.sort_values(by=['new_Date'], ascending=True, inplace=True)
 
 def test_read_speed():
     since = time.time()
@@ -87,11 +89,20 @@ D_MULTI_SELECT = {
     'Writer degradation': ['Delta MCW', 'Delta SER', 'Delta OW'],
     'Write-short': ['UEC (S5W, Func, SRST, Fin & Featuring)'],
 }
-
+ALERT_PARAMETER = {
+    'Write-Short': ['F61F_DPPM, F623_DPPM(PCM)'],
+    'Reader HI': ['Bi_state', 'hi_idd_sig_P99_rd_HT_2R', 'i_rd_172c_cnt_p99'],
+    'PE': ['R_delta_PE_p99', 'R_delSER_Max_P99_HT_Track0', 'R_delSER_Max_P99_NT_Track0'],
+    'XTI': ['R_delSER_Max_P99_HT_F_FTI', 'R_delSER_Max_P99_HT_N_FTI', 'R_delSER_Max_P99_HT_NTI', 'R_delSER_Max_P99_HT_Track23', 'R_delSER_Max_P99_HT_Trackminus1', 'R_delSER_Max_P99_HT_Trackplus1', 'nmax50byband_6600_min_P1'],
+    'XTI Degradation': ['dNTI_FR', 'OWC_delta_min_P1'],
+    'Writer Instability': ['hi_idd_sig_P99_wr_HT_trim', 'hi_idd_sig_P99_wr_HT_nontrim', 'RV_Rng_P99', 'B_byallband_P1'],
+    'Writer Degradation': ['Final_SER_delta_P99', 'MCW_MD_delta_P99', 'OWP_delta_min_P1']
+}
 def index(request):
     mselect_dict = {}
     dic = {}
     form_dict = dict(six.iterlists(request.GET))
+    # print('arrive index!', form_dict)
     df = DF
     dct = columns2dictionary(df)
     for key, value in dct.items():
@@ -108,6 +119,45 @@ def index(request):
     }
     # 下面一定要返回子模板，否则的话是block与endblock失效的原因！！！
     return render(request, 'visual/plot.html', context)
+
+def find_category(string):
+  for key, value in ALERT_PARAMETER.items():
+    for v in value:
+      if v in string:
+        return key
+
+def alert(request):
+    form_dict = dict(six.iterlists(request.GET))
+    new_dict = {key: ALERT_PARAMETER[key] for key in ALERT_PARAMETER}
+    for i in new_dict:
+        new_dict[i] = []
+    df = pd.read_csv(source_path + 'wafer_table.csv')
+    for i in range(len(df)):
+        tmp = {}
+        tmp['wafernum'] = df.iloc[i]['wafernum']
+        tmp['feature'] = df.iloc[i]['feature']
+        tmp['value'] = df.iloc[i]['value']
+        tmp['hdd_model'] = df.iloc[i]['hdd_model']
+        category = find_category(df.iloc[i]['feature'])
+        new_dict[category].append(tmp)
+    # alert_df = df[df['outlier'] == 1][['Product', 'HDD_Model', 'Head_Site', 'Disk', 'wafernum', 'parameter_name']]
+    # dat = []
+    # for i, j in alert_df.iterrows():
+    #     j = dict(j)
+    #     j['raw_index'] = i
+    #     dat.append(j)
+    context = {
+        'data': new_dict
+    }
+    # for i in new_dict:
+    #     print(i)
+    #     for j in new_dict[i]:
+    #         print(j['wafernum'], j['feature'], j['value'], j['hdd_model'])
+    #     print('--------------')
+
+
+    return render(request, 'visual/alert.html', context)
+
 
 def columns2dictionary(df):
     """
@@ -235,7 +285,6 @@ def plot(request):
     # print('total_trend', type(total_trend))
     context = {
         'total_trend': total_trend,
-
     }
     return HttpResponse(json.dumps(context, ensure_ascii=False),
                         content_type="application/json charset=utf-8")
@@ -273,7 +322,6 @@ def choose_path_file():
 
 def get_process_name(request):
     file_dir = 'C:/Users/1000300246/Desktop/test_folder'
-
     group_ls = []
     file = ''
     flag = ''
@@ -282,25 +330,37 @@ def get_process_name(request):
     independent = request.POST.get("independent")
     parameter = request.POST.get("dependent")
     by = request.POST.get("by")
-    print('by---------', by)
+    product = request.POST.get("product")
+    hddmodel = request.POST.get("hddmodel")
+    wec = request.POST.get("wec")
+    hsite = request.POST.get("hsite")
+    disk = request.POST.get("disk")
+    grade = request.POST.get("grade")
+
+    print('-------------', product, hddmodel, wec, hsite, disk,grade)
+
+    print('by---------', by, independent,parameter )
     #按什么分组
-    if independent == 'Magnetic':
-        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
-        flag = 'Magnetic'
-    elif independent == 'YC':
-        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
-        flag = 'Test'
-    elif independent == 'XTI Degradation':
-        group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
-        flag = 'XTI Degradation'
-    else:
-        flag = 'Test'
+    # if independent == 'Magnetic':
+    #     group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+    #     flag = 'Magnetic'
+    # elif independent == 'YC':
+    #     group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+    #     flag = 'Test'
+    # elif independent == 'XTI Degradation':
+    #     group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
+    #     flag = 'XTI Degradation'
+    # else:
+    #     flag = 'Test'
     #确认文件
+    df=''
+    para_value=''
     for f in os.listdir(file_dir):
         obj = re.search(independent, f)
         if obj:
             file = obj.string
             break
+    print('文件时', file)
     if file != '':
         file_name = file_dir + '/' + file
         df = pd.read_csv(file_name)
@@ -311,31 +371,83 @@ def get_process_name(request):
                 para_value = col
                 # break
         print('参数是', para_value)
-        if para_value != '':
-            # by date 分组
-            df_list = []
-            for group in group_ls:
-                transposed_df = df.pivot_table(index=by, columns=group, values=para_value, aggfunc='mean')
-                transposed_df.reset_index(inplace=True)
-                df_list.append(transposed_df)
-            all = df_list[0]
-            for i in range(1, len(df_list)):
-                all = pd.merge(all, df_list[i], left_on=by, right_on=by)
-            all.replace({np.nan: '-'}, inplace=True)
-            if by == 'Date':
-                # 按照时间排序，确保画图时的时间轴是正确的
-                all['new_date'] = 0
-                for i, it in all.iterrows():
-                    obj = all.loc[i, 'Date']
-                    obj_ = datetime.datetime.strptime(obj, "%m/%d/%Y")
-                    all.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
-                all.sort_values(by=['new_date'], ascending=True, inplace=True)
-            #将所有分组以字典的形式传到前端画图
-            for i in all.columns:
-                dict[i] = np.array(all[i]).tolist()
-        else:
-            flag = 'Test_no_para'
-    print(dict)
+    #去掉date或者wafer中为空值的部分
+    df = df.dropna(subset=[by])
+    df = df[(df['PRODUCT'] == product) & (df['HDD_Model'] == hddmodel) & (df['WAFER_EC'] == wec) & (df['HEAD_SITE'] == hsite) & (df['DISK'] == disk) & (df['GRADE'] == grade)]
+    df_ = df.copy()
+    if by=='Date':
+        df_['new_date'] = 0
+        for i, it in df_.iterrows():
+            obj = df_.loc[i, 'Date']
+
+            obj_ = datetime.datetime.strptime(str(obj), "%m/%d/%Y")
+            df_.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
+        df_.sort_values(by=['new_date'], ascending=True, inplace=True)
+    print("数据是", df_)
+    #所有数据点 散点
+    scatter_data = []
+    fit_data = {}
+    #fit出来的那条线的数据
+    fit_aver_data = []
+
+    if by == 'Date':
+        for i, it in df_.iterrows():
+            x = df_.loc[i, by]
+            y = df_.loc[i, para_value]
+            scatter_data.append([x, y])
+            if x not in fit_data:
+                fit_data[x] = []
+            fit_data[x].append(y)
+        for i in fit_data:
+            tmp = [i]
+            if len(fit_data[i]) > 1:
+                tmp.append(np.mean(fit_data[i]))
+            else:
+                tmp.append(fit_data[i][0])
+            fit_aver_data.append(tmp)
+    elif by == 'WAFERNUM':
+        x = df_[by].tolist()
+        y = df_[para_value].tolist()
+        df_['x_index'] = df_['WAFERNUM']
+        df_['x_index'] = pd.factorize(df_['x_index'])[0].astype(int)
+        df_['x_index'] = df_['x_index'].add(1)
+        sp = csaps.UnivariateCubicSmoothingSpline(df_['x_index'].tolist(), y, smooth=0.5)  # 1e-16
+        y_fit = sp(df_['x_index'].tolist())
+        for i in range(len(x)):
+            tmp_fit = [x[i], y_fit[i]]
+            tmp_scatter = [x[i], y[i]]
+            fit_aver_data.append(tmp_fit)
+            scatter_data.append(tmp_scatter)
+
+
+    # x = df_[by].tolist()
+    # y = df_[para_value].tolist()
+    # dic_try = {"x": df_[by].tolist(), "y": df_[para_value].tolist(), "by":by, "para":para_value}
+
+    #     if para_value != '':
+    #         # by date 分组
+    #         df_list = []
+    #         for group in group_ls:
+    #             transposed_df = df.pivot_table(index=by, columns=group, values=para_value, aggfunc='mean')
+    #             transposed_df.reset_index(inplace=True)
+    #             df_list.append(transposed_df)
+    #         all = df_list[0]
+    #         for i in range(1, len(df_list)):
+    #             all = pd.merge(all, df_list[i], left_on=by, right_on=by)
+    #         all.replace({np.nan: '-'}, inplace=True)
+    #         if by == 'Date':
+    #             # 按照时间排序，确保画图时的时间轴是正确的
+    #             all['new_date'] = 0
+    #             for i, it in all.iterrows():
+    #                 obj = all.loc[i, 'Date']
+    #                 obj_ = datetime.datetime.strptime(obj, "%m/%d/%Y")
+    #                 all.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
+    #             all.sort_values(by=['new_date'], ascending=True, inplace=True)
+    #         #将所有分组以字典的形式传到前端画图
+    #         for i in all.columns:
+    #             dict[i] = np.array(all[i]).tolist()
+    #     else:
+    #         flag = 'Test_no_para'
     # df_pho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'PHO')]
     # df_pho = df_pho.dropna()
     # df_tho = DF[(DF['PRODUCT'] == product_choose) & (DF['HDD_Model'] == model_choose) & (DF['HEAD_SITE'] == 'THO')]
@@ -350,9 +462,9 @@ def get_process_name(request):
     # print(dict)
     # print('filename', file_name)
     # print('para', para_value)
-    print('ffff', flag)
     lis1 = ['a', 'b', 'c', 'd', 'Fri', 'Sat', 'Sun']
     lis2 = [150, 230, 224, 218, 135, 147, 260]
+    trans_dict = {"by":by, "parameter": para_value, "scatter_data":scatter_data, "fit_aver_data": fit_aver_data}
     return render(request, './visual/plot.html', {
         # "pho_qty": pho_qty,
         # "pho_line": pho_line,
@@ -363,9 +475,18 @@ def get_process_name(request):
         # "tho_date": np.array(df_tho['Date']).tolist(),
         "lis1": lis1,
         "lis2": lis2,
+        "scatter_data":scatter_data,
+        "fit_aver_data": fit_aver_data,
+        "product":product,
+        "hddmodel":hddmodel,
+        "wec":wec,
+        "hsite":hsite,
+        "disk":disk,
+        "grade":grade,
         "independent": independent,
-        "parameter": parameter,
+        "parameter": para_value,
         "dict" : dict,
-        "flag" : flag,
-        "by" : by
+        "flag" : 'scatter_fit',
+        "trans_dict" : trans_dict,
+        "by_":by
     })
