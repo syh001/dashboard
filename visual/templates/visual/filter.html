@@ -77,49 +77,26 @@
                             <h5 class="ui header" id="choose1">Category</h5>
                             <select id="independent" name="independent">
                                 <option value="" disabled selected hidden>{{independent}}</option>
-                                <option value="YC"> YC </option>
-                                <option value="Magnetic"> Magnetic </option>
-                                <option value="Reader HI"> Reader HI </option>
-                                <option value="PE"> PE </option>
-                                <option value="XTI"> XTI </option>
-                                <option value="XTI Degradation"> XTI Degradation </option>
-                                <option value="Writer instability"> Writer instability </option>
-                                <option value="Writer degradation"> Writer degradation </option>
-                                <option value="Write-short"> Write-short </option>
+                                {% for key, value in ALERT_PARAMETER.items %}
+                                    <option value="{{ key }}">{{ key }}</option>
+                                {% endfor %}
                             </select>
                             <h5 class="ui header" id="choose2">Parameter</h5>
 <!--                            <div class="fields"></div>-->
                             <select id="dependent" name="dependent">
                                 <option value="">{{parameter}}</option>
-                                <option value="Yield"> Yield </option>
-                                <option value="EC"> EC </option>
-                                <option value="ACC"> ACC </option>
-                                <option value="MCW"> MCW </option>
-                                <option value="Roller SER"> Roller SER </option>
-                                <option value="1k-BEM(Rd)NT"> 1k-BEM(Rd)NT </option>
-                                <option value="1k-BEM(Rd)HT"> 1k-BEM(Rd)HT </option>
-                                <option value="Bi-state XTI Profile (writer induced HI)"> Bi-state XTI Profile (writer induced HI) </option>
-                                <option value="172c"> 172c </option>
-                                <option value="PE NT (Degauss on)"> PE NT (Degauss on) </option>
-                                <option value="PE HT (Degauss off/on)"> PE HT (Degauss off/on) </option>
-                                <option value="XTI NT"> XTI NT </option>
-                                <option value="XTI HT"> XTI HT </option>
-                                <option value="Delta XTI"> Delta XTI </option>
-                                <option value="Delta OWC"> Delta OWC </option>
-                                <option value="1K-BEM (WrRd) HT"> 1K-BEM (WrRd) HT </option>
-                                <option value="RV_Range"> RV_Range </option>
-                                <option value="B_Allband"> B_Allband </option>
-                                <option value="Delta MCW"> Delta MCW </option>
-                                <option value="Delta SER"> Delta SER </option>
-                                <option value="Delta OW"> Delta OW </option>
-                                <option value="UEC (S5W, Func, SRST, Fin & Featuring)"> UEC (S5W, Func, SRST, Fin & Featuring) </option>
+                                {% for key, value in ALERT_PARAMETER.items %}
+                                    {% for v in value %}
+                                        <option value="{{ v }}">{{ v }}</option>
+                                    {% endfor %}
+                                {% endfor %}
                             </select>
                             <h5 class="ui header" id="choose3">By</h5>
 <!--                            <div class="fields"></div>-->
                             <select id="by" name="by">
                                 <option value="" disabled selected hidden>{{by_}}</option>
                                 <option value="Date">Date</option>
-                                <option value="WAFERNUM">Wafer</option>
+                                <option value="Wafernum">Wafer</option>
                             </select>
                             <h3 class="ui header" id="">Group</h3>
                             <h5>Product</h5>
@@ -142,14 +119,10 @@
                             <select name="disk" id="disk">
                                 <option value="">{{disk}}</option>
                             </select>
-                            <h5>Grade</h5>
-                            <select name="grade" id="grade">
-                                <option value="">{{grade}}</option>
-                            </select>
-
-
-
-
+<!--                            <h5>Grade</h5>-->
+<!--                            <select name="grade" id="grade">-->
+<!--                                <option value="">{{grade}}</option>-->
+<!--                            </select>-->
                         </div>
                     </div>
                 </div>
@@ -170,13 +143,16 @@
     </div>
 </div>
 
+<script>
+    $('.ui.fluid.search.dropdown')
+        .dropdown({ fullTextSearch: true });
+</script>
 <script type="text/javascript">
     $("#AJAX_get_1").click(function (event){
         event.preventDefault();
 <!--        alert('所选维度为 :'+ $("#process_choose").val());-->
         var form_data = {
             "process_choose": $("#process_choose").val(),
-
         };
         $.ajax({
             url: '{% url 'visual:query1' %}',
@@ -247,35 +223,14 @@
     })
 </script>
 
-
-
-
-
-<!-- 因为用到Semantic UI的Search Dropdown控件，必须有下面语句初始化 -->
 <script>
-    $('.ui.fluid.search.dropdown')
-        .dropdown({ fullTextSearch: true });
-</script>
-<script>
-
-
     $(document).ready(function() {
       $("#dependent > option").hide();
       $(document).on('change', '#independent', function() {
         var independent_val = $(this).val();
         $("#dependent > option").hide();
-        let option_list = ['YC', 'Magnetic', 'Reader HI', 'PE', 'XTI', 'XTI Degradation', 'Writer instability', 'Writer degradation', 'Write-short'];
-        let D_MULTI_SELECT = {
-            'YC': ['Yield', 'EC'],
-            'Magnetic': ['ACC', 'MCW', 'Roller SER'],
-            'Reader HI': ['1k-BEM(Rd)NT', '1k-BEM(Rd)HT', 'Bi-state XTI Profile (writer induced HI)', '172c'],
-            'PE': ['PE NT (Degauss on)', 'PE HT (Degauss off/on)'],
-            'XTI': ['XTI NT', 'XTI HT'],
-            'XTI Degradation': ['Delta XTI', 'Delta OWC'],
-            'Writer instability': ['1K-BEM (WrRd) HT', 'RV_Range', 'B_Allband'],
-            'Writer degradation': ['Delta MCW', 'Delta SER', 'Delta OW'],
-            'Write-short': ['UEC (S5W, Func, SRST, Fin & Featuring)'],
-        };
+        var option_list = {{option_list|safe}};
+        var D_MULTI_SELECT = {{ALERT_PARAMETER|safe}};
         for (var option in option_list) {
             var op_val = option_list[option];
             if (independent_val == op_val) {
@@ -289,7 +244,6 @@
       });
     });
 </script>
-
 
 <script>
     var data = [
@@ -311,7 +265,6 @@
                                                          {'name' : 'U2'}]
                                         }
                                     ]
-
                                 }
                             ]
                         }

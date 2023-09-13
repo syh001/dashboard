@@ -1,0 +1,116 @@
+{% extends "alert/base.html" %}
+<!-- 隐藏分隔条 -->
+<div class="ui hidden divider"></div>
+{% block body %}
+
+<!-- 不用循环写表格的方法，多个需要手动循环 -->
+<!--<table class="ui collapsing table">-->
+<!--  <thead>-->
+<!--    <tr>-->
+<!--        <th colspan="7">-->
+<!--            Magnetic-->
+<!--        </th>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <th>raw_index</th>-->
+<!--      <th>wafernum</th>-->
+<!--      <th>Product</th>-->
+<!--      <th>HDD_Model</th>-->
+<!--      <th>Head_Site</th>-->
+<!--      <th>Disk</th>-->
+<!--      <th>parameter_name</th>-->
+<!--    </tr>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--    <script>-->
+<!--        var data = {{data|safe}};-->
+<!--        for (var i = 0; i < data.length; i++) {-->
+<!--            document.write(`-->
+<!--              <tr>-->
+<!--                <td width="100">${data[i].raw_index}</td>-->
+<!--                <td width="100">${data[i].wafernum}</td>-->
+<!--                <td width="100">${data[i].Product}</td>-->
+<!--                <td width="100">${data[i].HDD_Model}</td>-->
+<!--                <td width="100">${data[i].Head_Site}</td>-->
+<!--                <td width="100">${data[i].Disk}</td>-->
+<!--                <td width="100">${data[i].parameter_name}</td>-->
+<!--              </tr>-->
+<!--            `);-->
+<!--        }-->
+<!--    </script>-->
+<!--  </tbody>-->
+<!--</table>-->
+
+<script>
+    var dic = {{data|safe}};
+    for (var key in dic) {
+        document.write('<table class="ui collapsing table">');
+<!--        document.write('<table>');-->
+        document.write(`
+            <thead>
+                <tr>
+                    <th colspan="4">
+                        ${key}
+                    </th>
+                </tr>
+            </thead>
+            <tr>
+              <td>wafernum</td>
+              <td>feature</td>
+              <td>value</td>
+              <td>hdd_model</td>
+            </tr>
+        `);
+        for (var i = 0; i < dic[key].length; i++) {
+            document.write(`
+                 <tr>
+                    <td width="20">${dic[key][i].wafernum}</td>
+                    <td width="20">${dic[key][i].feature}</td>
+                    <td width="20">${dic[key][i].value}</td>
+                    <td width="20">${dic[key][i].hdd_model}</td>
+                  </tr>
+            `);
+        }
+        document.write('</table>');
+    }
+</script>
+
+<div class="ui form">
+    <form action="/visual/index" method="post">
+        {% csrf_token %}
+<!--        <div class="ui buttons">-->
+<!--            <input class="ui blue button" type='button' id='to_index' value="跳转画图"/>-->
+<!--        </div>-->
+
+        <div class="row" style="text-align: center;margin-top: 30px;">
+            <button class="ui positive basic button">画图</button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $("#to_index").click(function (event){
+        event.preventDefault();
+        var form_data = {
+            "D_MULTI_SELECT": $("#D_MULTI_SELECT").val(),
+
+        };
+        $.ajax({
+            url: '{% url 'visual:index' %}',
+            type: 'GET',
+            data: form_data,
+            success: function(ret) {
+                $("#D_MULTI_SELECT").html(ret['D_MULTI_SELECT'])
+            },
+            error: function() {
+                console.log('failure')
+            }
+        });
+    })
+</script>
+{% endblock body %}
+
+
+
+
+

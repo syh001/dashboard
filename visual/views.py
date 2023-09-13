@@ -1,6 +1,6 @@
 import re
 import datetime
-
+from ydata_profiling import ProfileReport
 import csaps
 from django.http import HttpResponse
 from sqlalchemy import create_engine
@@ -10,7 +10,6 @@ import os
 from django.shortcuts import render, redirect
 import json
 from .charts import *
-
 try:
     import six
 except ImportError:
@@ -18,9 +17,7 @@ except ImportError:
 import time
 import json
 from random import randrange
-
 from django.http import HttpResponse
-
 # from rest_framework.views import APIView
 root_path = './'
 source_path = 'C:/Users/1000300246/Desktop/test_folder/'
@@ -90,7 +87,7 @@ D_MULTI_SELECT = {
     'Write-short': ['UEC (S5W, Func, SRST, Fin & Featuring)'],
 }
 ALERT_PARAMETER = {
-    'Write-Short': ['F61F_DPPM, F623_DPPM(PCM)'],
+    'Write-Short': ['F61F_DPPM', 'F623_DPPM(PCM)'],
     'Reader HI': ['Bi_state', 'hi_idd_sig_P99_rd_HT_2R', 'i_rd_172c_cnt_p99'],
     'PE': ['R_delta_PE_p99', 'R_delSER_Max_P99_HT_Track0', 'R_delSER_Max_P99_NT_Track0'],
     'XTI': ['R_delSER_Max_P99_HT_F_FTI', 'R_delSER_Max_P99_HT_N_FTI', 'R_delSER_Max_P99_HT_NTI', 'R_delSER_Max_P99_HT_Track23', 'R_delSER_Max_P99_HT_Trackminus1', 'R_delSER_Max_P99_HT_Trackplus1', 'nmax50byband_6600_min_P1'],
@@ -114,8 +111,10 @@ def index(request):
     context = {
         'mselect_dict': mselect_dict,
         'D_MULTI_SELECT': D_MULTI_SELECT,
+        'ALERT_PARAMETER': ALERT_PARAMETER,
         'Product': dic['PRODUCT'],
         'Model': dic['HDD_Model'],
+        'option_list': list(ALERT_PARAMETER.keys())
     }
     # 下面一定要返回子模板，否则的话是block与endblock失效的原因！！！
     return render(request, 'visual/plot.html', context)
@@ -156,7 +155,7 @@ def alert(request):
     #     print('--------------')
 
 
-    return render(request, 'visual/alert.html', context)
+    return render(request, 'alert/alert.html', context)
 
 
 def columns2dictionary(df):
@@ -304,6 +303,16 @@ def blog(request):
     }
     return render(request, 'visual/blog_main_display.html', context)
 
+def overview(request):
+    form_dict = dict(six.iterlists(request.GET))
+    source_path = 'C:/Users/1000300246/Desktop/test_folder/'
+    df = pd.read_csv(source_path + 'all3prod_hddsumec_2023wk35.csv')
+    # profile = ProfileReport(df, title="Profiling Report")
+    # profile.to_file("C:/Users/1000300246/Desktop/test_folder/your_report.html")
+    context = {
+        'mselect_dict': df,
+    }
+    return render(request, 'visual/your_report.html')
 
 def choose_path_file():
     import os
@@ -321,7 +330,7 @@ def choose_path_file():
 
 
 def get_process_name(request):
-    file_dir = 'C:/Users/1000300246/Desktop/test_folder'
+    file_dir = 'C:/Users/1000300246/Desktop/test_folder/'
     group_ls = []
     file = ''
     flag = ''
@@ -335,9 +344,9 @@ def get_process_name(request):
     wec = request.POST.get("wec")
     hsite = request.POST.get("hsite")
     disk = request.POST.get("disk")
-    grade = request.POST.get("grade")
+    # grade = request.POST.get("grade")
 
-    print('-------------', product, hddmodel, wec, hsite, disk,grade)
+    print('-------------', product, hddmodel, wec, hsite, disk)
 
     print('by---------', by, independent,parameter )
     #按什么分组
@@ -352,28 +361,35 @@ def get_process_name(request):
     #     flag = 'XTI Degradation'
     # else:
     #     flag = 'Test'
+
     #确认文件
-    df=''
-    para_value=''
-    for f in os.listdir(file_dir):
-        obj = re.search(independent, f)
-        if obj:
-            file = obj.string
+    # df=''
+    # para_value=''
+    # for f in os.listdir(file_dir):
+    #     obj = re.search(independent, f)
+    #     if obj:
+    #         file = obj.string
+    #         break
+    # print('文件时', file)
+    # if file != '':
+    #     file_name = file_dir + '/' + file
+    #     df = pd.read_csv(file_name)
+
+
+    df = pd.read_csv(file_dir + 'all3prod_hddsumec_2023wk35.csv')
+    # 确认参数
+    para_value = ''
+    for col in df.columns:
+        if parameter in col:
+            para_value = col
             break
-    print('文件时', file)
-    if file != '':
-        file_name = file_dir + '/' + file
-        df = pd.read_csv(file_name)
-        #确认参数
-        para_value = ''
-        for col in df.columns:
-            if parameter in col:
-                para_value = col
-                # break
-        print('参数是', para_value)
+    print('参数是', para_value)
+
     #去掉date或者wafer中为空值的部分
     df = df.dropna(subset=[by])
-    df = df[(df['PRODUCT'] == product) & (df['HDD_Model'] == hddmodel) & (df['WAFER_EC'] == wec) & (df['HEAD_SITE'] == hsite) & (df['DISK'] == disk) & (df['GRADE'] == grade)]
+    # df = df[(df['Product'] == product) & (df['hdd_model'] == hddmodel) & (df['Wafer_EC'] == wec) & (df['Head_site'] == hsite) & (df['disk'] == disk) & (df['GRADE'] == grade)]
+    df = df[(df['Product'] == product) & (df['hdd_model'] == hddmodel) & (df['Wafer_EC'] == wec) & (df['Head_site'] == hsite) & (df['disk'] == disk)]
+
     df_ = df.copy()
     if by=='Date':
         df_['new_date'] = 0
@@ -389,7 +405,7 @@ def get_process_name(request):
     fit_data = {}
     #fit出来的那条线的数据
     fit_aver_data = []
-
+    df_ = df_.dropna(subset=[para_value])
     if by == 'Date':
         for i, it in df_.iterrows():
             x = df_.loc[i, by]
@@ -405,10 +421,10 @@ def get_process_name(request):
             else:
                 tmp.append(fit_data[i][0])
             fit_aver_data.append(tmp)
-    elif by == 'WAFERNUM':
+    elif by == 'Wafernum':
         x = df_[by].tolist()
         y = df_[para_value].tolist()
-        df_['x_index'] = df_['WAFERNUM']
+        df_['x_index'] = df_['Wafernum']
         df_['x_index'] = pd.factorize(df_['x_index'])[0].astype(int)
         df_['x_index'] = df_['x_index'].add(1)
         sp = csaps.UnivariateCubicSmoothingSpline(df_['x_index'].tolist(), y, smooth=0.5)  # 1e-16
@@ -418,6 +434,8 @@ def get_process_name(request):
             tmp_scatter = [x[i], y[i]]
             fit_aver_data.append(tmp_fit)
             scatter_data.append(tmp_scatter)
+    print('fit_aver_data', fit_aver_data)
+    print('scatter_data', scatter_data)
 
 
     # x = df_[by].tolist()
@@ -482,7 +500,7 @@ def get_process_name(request):
         "wec":wec,
         "hsite":hsite,
         "disk":disk,
-        "grade":grade,
+        # "grade":grade,
         "independent": independent,
         "parameter": para_value,
         "dict" : dict,

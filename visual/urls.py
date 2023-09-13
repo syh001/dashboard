@@ -8,6 +8,7 @@ urlpatterns = [
     path(r'query', views.query, name="query"),
     path(r'query1', views.query1, name="query1"),
     path('blog', views.blog, name = 'blog'),
+    path('overview', views.overview, name = 'overview'),
     path(r'showdata', views.showdata, name="showdata"),
     path(r'plot', views.plot, name="plot"),
     path(r'get_process_name', views.get_process_name),
