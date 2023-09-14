@@ -41,39 +41,72 @@
 <!--  </tbody>-->
 <!--</table>-->
 
-<script>
-    var dic = {{data|safe}};
-    for (var key in dic) {
-        document.write('<table class="ui collapsing table">');
-<!--        document.write('<table>');-->
-        document.write(`
-            <thead>
-                <tr>
-                    <th colspan="4">
-                        ${key}
-                    </th>
-                </tr>
-            </thead>
-            <tr>
-              <td>wafernum</td>
-              <td>feature</td>
-              <td>value</td>
-              <td>hdd_model</td>
-            </tr>
-        `);
-        for (var i = 0; i < dic[key].length; i++) {
-            document.write(`
-                 <tr>
-                    <td width="20">${dic[key][i].wafernum}</td>
-                    <td width="20">${dic[key][i].feature}</td>
-                    <td width="20">${dic[key][i].value}</td>
-                    <td width="20">${dic[key][i].hdd_model}</td>
-                  </tr>
-            `);
-        }
-        document.write('</table>');
-    }
-</script>
+<h3 class="ui center aligned header">Outlier Alert</h3>
+<div class="ui two column stackable grid container">
+    {% for key,value in data.items %}
+        <div class="column">
+            <div class="ui segment">
+                <details>
+                    <summary>
+                        {{ key }}
+                    </summary>
+                    <p>
+
+                        <table class="ui collapsing table">
+                            <tr>
+                              <td>wafernum</td>
+                              <td>feature</td>
+                              <td>value</td>
+                              <td>hdd_model</td>
+                            </tr>
+                        {% for i in value %}
+                              <tr>
+                                  <td width="20">{{i.wafernum}}</td>
+                                  <td width="20">{{i.feature}}</td>
+                                  <td width="20">{{i.value}}</td>
+                                  <td width="20">{{i.hdd_model}}</td>
+                              </tr>
+                        {% endfor %}
+                        </table>
+                    </p>
+                </details>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!--<script>-->
+<!--    var dic = {{data|safe}};-->
+<!--    for (var key in dic) {-->
+<!--        document.write('<table class="ui collapsing table">');-->
+<!--        document.write(`-->
+<!--            <thead>-->
+<!--                <tr>-->
+<!--                    <th colspan="4">-->
+<!--                        ${key}-->
+<!--                    </th>-->
+<!--                </tr>-->
+<!--            </thead>-->
+<!--            <tr>-->
+<!--              <td>wafernum</td>-->
+<!--              <td>feature</td>-->
+<!--              <td>value</td>-->
+<!--              <td>hdd_model</td>-->
+<!--            </tr>-->
+<!--        `);-->
+<!--        for (var i = 0; i < dic[key].length; i++) {-->
+<!--            document.write(`-->
+<!--                 <tr>-->
+<!--                    <td width="20">${dic[key][i].wafernum}</td>-->
+<!--                    <td width="20">${dic[key][i].feature}</td>-->
+<!--                    <td width="20">${dic[key][i].value}</td>-->
+<!--                    <td width="20">${dic[key][i].hdd_model}</td>-->
+<!--                  </tr>-->
+<!--            `);-->
+<!--        }-->
+<!--        document.write('</table>');-->
+<!--    }-->
+<!--</script>-->
 
 <div class="ui form">
     <form action="/visual/index" method="post">

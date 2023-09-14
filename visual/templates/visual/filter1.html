@@ -1,9 +1,173 @@
-<!--<form name="process_form" action="/visual/get_procestry?trans_dict={{trans_dict}}" method="post" style="height:438px;">-->
-<!--  {% csrf_token %}-->
-<!--  <div class="ui input">-->
-<!--    <input type="text" placeholder="输入平滑比率" id="ratio">-->
-<!--  </div>-->
-<!--  <div class="row" style="margin-top: 30px;size: 30px">-->
-<!--      <button class="ui primary button">画图</button>-->
-<!--  </div>-->
-<!--</form>-->
+option = {
+  title: {
+    text: 'Stacked Line'
+  },
+  tooltip: {
+    trigger: 'axis'
+  },
+  legend: {
+    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {}
+    }
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      name: 'Email',
+      type: 'line',
+      stack: 'Total',
+      data: [120, 132, 101, 134, 90, 230, 210]
+    },
+    {
+      name: 'Union Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [220, 182, 191, 234, 290, 330, 310]
+    },
+    {
+      name: 'Video Ads',
+      type: 'line',
+      stack: 'Total',
+      data: [150, 232, 201, 154, 190, 330, 410]
+    },
+    {
+      name: 'Direct',
+      type: 'line',
+      stack: 'Total',
+      data: [320, 332, 301, 334, 390, 330, 320]
+    },
+    {
+      name: 'Search Engine',
+      type: 'line',
+      stack: 'Total',
+      data: [820, 932, 901, 934, 1290, 1330, 1320]
+    }
+  ]
+};
+
+
+option = {
+    color : ['green', 'red'],
+    legend: {
+        data:['scatter1', 'fit-line1','scatter2', 'fit-line2']
+    },
+   tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+        type: 'cross',
+        animation: false,
+        }
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            dataZoom: {
+                yAxisIndex: 'none'
+            },
+            dataView: {readOnly: false},
+            magicType: {type: ['line', 'bar']},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    dataZoom: [
+        {
+          type: 'slider',
+          xAxisIndex: 0,
+          filterMode: 'none'
+        },
+        {
+          type: 'slider',
+          yAxisIndex: 0,
+          filterMode: 'none'
+        },
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          filterMode: 'none'
+        },
+        {
+          type: 'inside',
+          yAxisIndex: 0,
+          filterMode: 'none'
+        }
+    ],
+    grid: {
+        top: 70,
+        bottom: 50,
+        containLabel: true
+    },
+
+     xAxis: {
+        type: 'category',
+        axisTick: {
+            alignWithLabel: true
+        },
+        name:'a',
+        nameTextStyle:{
+        color:'#333'
+        },
+        boundaryGap: true
+    },
+    yAxis:{
+        name:'b',
+        type: 'value',
+        nameTextStyle:{
+            color:'#333'
+        },
+    },
+    series: [{
+        name:'scatter1',
+        symbolSize: 5,
+        data: [['a',1],['b',5]],
+        type: 'scatter',
+        smooth:true,
+        showSymbol: false,
+        barGap: 0
+    },
+    {
+        name:'fit-line1',
+        symbolSize: 5,
+        data: [['a',1],['b',5]],
+        type: 'line',
+        smooth:true,
+        showSymbol:false,
+        barGap: 0
+    },
+    {
+        name:'scatter2',
+        symbolSize: 5,
+        data: [['a',7],['b',10]],
+        type: 'scatter',
+        smooth:true,
+        showSymbol: false,
+        barGap: 0
+    },
+    {
+        name:'fit-line2',
+        symbolSize: 5,
+        data: [['a',7],['b',10]],
+        type: 'line',
+        smooth:true,
+        showSymbol:false,
+        barGap: 0
+    }
+   ]
+};
+

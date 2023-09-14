@@ -18,6 +18,7 @@ import time
 import json
 from random import randrange
 from django.http import HttpResponse
+from django.template.defaulttags import register
 # from rest_framework.views import APIView
 root_path = './'
 source_path = 'C:/Users/1000300246/Desktop/test_folder/'
@@ -27,6 +28,9 @@ target_path = 'C:/Users/sas053/Desktop/dataset'
 global DF
 DF = pd.read_csv('C:/Users/1000300246/Desktop/test_folder/HDD_Magnetic.csv')
 # DF.sort_values(by=['new_Date'], ascending=True, inplace=True)
+@register.filter
+def get_range(value):
+    return range(len(value))
 
 def test_read_speed():
     since = time.time()
@@ -126,6 +130,8 @@ def find_category(string):
         return key
 
 def alert(request):
+    dic1 = {'a':[{'wafer':110,'feature':'dvnj'},{'wafer':110,'feature':'dvnj'},{'wafer':110,'feature':'dvnj'}],
+            'b':[{'wafer':111,'feature':'dfve'},{'wafer':110,'feature':'dvnj'}]}
     form_dict = dict(six.iterlists(request.GET))
     new_dict = {key: ALERT_PARAMETER[key] for key in ALERT_PARAMETER}
     for i in new_dict:
@@ -327,7 +333,44 @@ def choose_path_file():
             print("Parent folder:", parent)
             print("Filename:", filename)
 
-
+def generate_plot_data(df, by, para_value):
+    # 所有数据点 散点
+    scatter_data = []
+    fit_data = {}
+    # fit出来的那条线的数据
+    fit_aver_data = []
+    df_ = df.dropna(subset=[para_value])
+    if by == 'Date':
+        for i, it in df_.iterrows():
+            x = df_.loc[i, by]
+            y = df_.loc[i, para_value]
+            scatter_data.append([x, y])
+            if x not in fit_data:
+                fit_data[x] = []
+            fit_data[x].append(y)
+        for i in fit_data:
+            tmp = [i]
+            if len(fit_data[i]) > 1:
+                tmp.append(np.mean(fit_data[i]))
+            else:
+                tmp.append(fit_data[i][0])
+            fit_aver_data.append(tmp)
+    elif by == 'Wafernum':
+        x = df_[by].tolist()
+        y = df_[para_value].tolist()
+        df_['x_index'] = df_['Wafernum']
+        df_['x_index'] = pd.factorize(df_['x_index'])[0].astype(int)
+        df_['x_index'] = df_['x_index'].add(1)
+        sp = csaps.UnivariateCubicSmoothingSpline(df_['x_index'].tolist(), y, smooth=0.8)  # 1e-16
+        y_fit = sp(df_['x_index'].tolist())
+        for i in range(len(x)):
+            tmp_fit = [x[i], y_fit[i]]
+            tmp_scatter = [x[i], y[i]]
+            fit_aver_data.append(tmp_fit)
+            scatter_data.append(tmp_scatter)
+    print('fit_aver_data', fit_aver_data)
+    print('scatter_data', scatter_data)
+    return fit_aver_data, scatter_data
 
 def get_process_name(request):
     file_dir = 'C:/Users/1000300246/Desktop/test_folder/'
@@ -346,9 +389,8 @@ def get_process_name(request):
     disk = request.POST.get("disk")
     # grade = request.POST.get("grade")
 
-    print('-------------', product, hddmodel, wec, hsite, disk)
-
-    print('by---------', by, independent,parameter )
+    # print('-------------', product, hddmodel, wec)
+    # print('by---------', by, independent,parameter )
     #按什么分组
     # if independent == 'Magnetic':
     #     group_ls = ['PRODUCT', 'HDD_Model', 'WAFER_EC', 'HEAD_SITE', 'DISK_SITE', 'DISK', 'GRADE']
@@ -387,55 +429,33 @@ def get_process_name(request):
 
     #去掉date或者wafer中为空值的部分
     df = df.dropna(subset=[by])
-    # df = df[(df['Product'] == product) & (df['hdd_model'] == hddmodel) & (df['Wafer_EC'] == wec) & (df['Head_site'] == hsite) & (df['disk'] == disk) & (df['GRADE'] == grade)]
+
+    #origin df
     df = df[(df['Product'] == product) & (df['hdd_model'] == hddmodel) & (df['Wafer_EC'] == wec) & (df['Head_site'] == hsite) & (df['disk'] == disk)]
+    scatter_data = generate_plot_data(df,by, para_value)[0]
+    fit_aver_data = generate_plot_data(df,by, para_value)[1]
+    pho_df = df[(df['Product'] == product) & (df['hdd_model'] == hddmodel) & (df['Wafer_EC'] == wec) & (df['Head_site'] == 'PHO')]
+    pho_dic = {}
+    disk_ls = set(df['disk'].tolist())
+    for i in disk_ls:
+        pho_dic[i] = {}
+        pho_df_ = pho_df.copy()
+        pho_df_ = pho_df_[(pho_df_['disk'] == i)]
+        pho_dic[i]['scatter_data'] = generate_plot_data(pho_df_, by, para_value)[0]
+        pho_dic[i]['fit_aver_data'] = generate_plot_data(pho_df_, by, para_value)[1]
 
-    df_ = df.copy()
-    if by=='Date':
-        df_['new_date'] = 0
-        for i, it in df_.iterrows():
-            obj = df_.loc[i, 'Date']
 
-            obj_ = datetime.datetime.strptime(str(obj), "%m/%d/%Y")
-            df_.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
-        df_.sort_values(by=['new_date'], ascending=True, inplace=True)
-    print("数据是", df_)
-    #所有数据点 散点
-    scatter_data = []
-    fit_data = {}
-    #fit出来的那条线的数据
-    fit_aver_data = []
-    df_ = df_.dropna(subset=[para_value])
-    if by == 'Date':
-        for i, it in df_.iterrows():
-            x = df_.loc[i, by]
-            y = df_.loc[i, para_value]
-            scatter_data.append([x, y])
-            if x not in fit_data:
-                fit_data[x] = []
-            fit_data[x].append(y)
-        for i in fit_data:
-            tmp = [i]
-            if len(fit_data[i]) > 1:
-                tmp.append(np.mean(fit_data[i]))
-            else:
-                tmp.append(fit_data[i][0])
-            fit_aver_data.append(tmp)
-    elif by == 'Wafernum':
-        x = df_[by].tolist()
-        y = df_[para_value].tolist()
-        df_['x_index'] = df_['Wafernum']
-        df_['x_index'] = pd.factorize(df_['x_index'])[0].astype(int)
-        df_['x_index'] = df_['x_index'].add(1)
-        sp = csaps.UnivariateCubicSmoothingSpline(df_['x_index'].tolist(), y, smooth=0.5)  # 1e-16
-        y_fit = sp(df_['x_index'].tolist())
-        for i in range(len(x)):
-            tmp_fit = [x[i], y_fit[i]]
-            tmp_scatter = [x[i], y[i]]
-            fit_aver_data.append(tmp_fit)
-            scatter_data.append(tmp_scatter)
-    print('fit_aver_data', fit_aver_data)
-    print('scatter_data', scatter_data)
+    # df_ = df.copy()
+    # if by=='Date':
+    #     df_['new_date'] = 0
+    #     for i, it in df_.iterrows():
+    #         obj = df_.loc[i, 'Date']
+    #         obj_ = datetime.datetime.strptime(str(obj), "%m/%d/%Y")
+    #         df_.loc[i, 'new_date'] = (obj_ - datetime.datetime(1970, 1, 1)).total_seconds()
+    #     df_.sort_values(by=['new_date'], ascending=True, inplace=True)
+    # print("数据是", df_)
+
+
 
 
     # x = df_[by].tolist()
@@ -501,6 +521,7 @@ def get_process_name(request):
         "hsite":hsite,
         "disk":disk,
         # "grade":grade,
+        "pho_dic": pho_dic,
         "independent": independent,
         "parameter": para_value,
         "dict" : dict,

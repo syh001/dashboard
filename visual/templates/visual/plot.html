@@ -38,7 +38,6 @@
         <script type="text/javascript">
             var myChart=echarts.init(document.getElementById('single_plot'));
 
-<!--            x = {{x|safe}};-->
             dic_try = {{dic_try|safe}};
             var option = {
               title: {
@@ -484,7 +483,47 @@
                         saveAsImage: {}
                     }
                 },
+<!--                dataZoom: [-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    xAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    type: 'inside',-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    xAxisIndex: [0, 1]-->
 
+<!--                  },-->
+<!--                  {-->
+<!--                    type: 'inside',-->
+<!--                    orient: 'vertical'-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    yAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    show: true,-->
+<!--                    type: 'inside',-->
+<!--                    realtime: true,-->
+<!--                    start: 30,-->
+<!--                    end: 70,-->
+<!--                    yAxisIndex: [0, 1]-->
+<!--                  },-->
+<!--                  {-->
+<!--                    type: 'inside',-->
+<!--                    orient: 'horizontal'-->
+<!--                  }-->
+<!--                ],-->
                 dataZoom: [
                     {
                       type: 'slider',
@@ -530,8 +569,6 @@
                     nameTextStyle:{
                         color:'#333'
                     },
-
-
                 },
                 series: [{
                     name:'scatter',
@@ -551,8 +588,64 @@
                     showSymbol:false,
                     barGap: 0
                 }
-                ]
+               ]
             };
+<!--            series: [{-->
+<!--                    name:'scatter',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['SL5b']['scatter_data'],-->
+<!--                    type: 'scatter',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol: false,-->
+<!--                    barGap: 0-->
+<!--                },-->
+<!--                {-->
+<!--                    name:'fit-line',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['SL5b']['fit_aver_data'],-->
+<!--                    type: 'line',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol:false,-->
+<!--                    barGap: 0-->
+<!--                },-->
+<!--                {-->
+<!--                    name:'scatter',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['other']['scatter_data'],-->
+<!--                    type: 'scatter',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol: false,-->
+<!--                    barGap: 0-->
+<!--                },-->
+<!--                {-->
+<!--                    name:'fit-line',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['other']['fit_aver_data'],-->
+<!--                    type: 'line',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol:false,-->
+<!--                    barGap: 0-->
+<!--                },-->
+<!--                {-->
+<!--                    name:'scatter',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['SL6a']['scatter_data'],-->
+<!--                    type: 'scatter',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol: false,-->
+<!--                    barGap: 0-->
+<!--                },-->
+<!--                {-->
+<!--                    name:'fit-line',-->
+<!--                    symbolSize: 5,-->
+<!--                    data: trans_dict['SL6a']['fit_aver_data'],-->
+<!--                    type: 'line',-->
+<!--                    smooth:true,-->
+<!--                    showSymbol:false,-->
+<!--                    barGap: 0-->
+<!--                }-->
+<!--               ]-->
+<!--            };-->
             myChart.setOption(option);
          </script>
     </div>
